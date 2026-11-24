@@ -70,10 +70,16 @@ function aplicarFiltros() {
   renderTablaParticipantes(filtrados);
 }
 
+const ADMIN_EMAIL = "acaamano287@uan.edu.co";
+
 async function cargarDashboard() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     window.location.href = "./login.html";
+    return;
+  }
+  if ((user.email || "").toLowerCase() !== ADMIN_EMAIL) {
+    window.location.href = "./encuesta.html";
     return;
   }
 
