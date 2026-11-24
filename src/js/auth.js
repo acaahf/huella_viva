@@ -10,11 +10,37 @@ form?.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
   const tipoUsuario = document.getElementById("tipo_usuario").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error && error.message.toLowerCase().includes("invalid login credentials")) {
+    const signUpRes = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { tipo_usuario: tipoUsuario } }
+    });
+
+    if (signUpRes.error) {
+      const msg = signUpRes.error.message.toLowerCase().includes("already registered")
+        ? "ContraseÃ±a incorrecta para este correo."
+        : `Error al registrar: ${signUpRes.error.message}`;
+      mostrarMensaje(estado, msg, "error");
+      return;
+    }
+
+    if (!signUpRes.data.session) {
+      mostrarMensaje(estado, "Cuenta creada. Revisa tu correo para confirmarla (o desactiva 'Confirm email' en Supabase).", "info");
+      return;
+    }
+
+    data = signUpRes.data;
+    error = null;
+  }
+
   if (error) {
     mostrarMensaje(estado, `Error de acceso: ${error.message}`, "error");
     return;
   }
+
   await supabase.from("profiles").upsert({ id: data.user.id, tipo_usuario: tipoUsuario });
   window.location.href = "./consentimiento.html";
 });
