@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html lang="es-CO">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Encuesta â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/formularios.css"></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encuesta â€” HuellaViva UAN</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/formularios.css">
+  <link rel="stylesheet" href="./css/wizard.css">
+</head>
 <body>
-  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
-  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <aside class="banner-institucional" role="note">
+    <strong>Prototipo AcadÃ©mico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnÃ³stico institucional. NO es un inventario verificado, certificaciÃ³n ambiental ni resultado oficial de RENARE.
+  </aside>
+  <header class="cabecera-principal">
+    <a class="marca" href="./index.html">
+      <img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN">
+      <span>HuellaViva UAN</span>
+    </a>
+    <nav aria-label="Principal">
+      <a class="btn-nav" href="./encuesta.html">Encuesta</a>
+      <a class="btn-nav" href="./informe.html">Mi Informe</a>
+      <a class="btn-nav" href="./derechos.html">Derechos</a>
+      <a class="btn-nav" href="./admin.html">Admin</a>
+    </nav>
+  </header>
+
   <main class="contenedor">
-    <section class="tarjeta">
-      <h1>Encuesta de Actividad (Reporte Anualizado)</h1>
-      <p id="info-periodo">Verificando periodo activo y consentimiento...</p>
-      <form id="form-encuesta">
-        <fieldset>
-          <legend>1. Electricidad del hogar (Obligatoria)</legend>
-          <div class="campo"><label for="personas_hogar">Personas que comparten el hogar <span class="etiqueta-req">*</span></label><input id="personas_hogar" type="number" min="1" max="20" value="1" required></div>
-          <div class="campo"><label for="elec_kwh">Consumo anual estimado (kWh/ano) <span class="etiqueta-req">*</span></label><input id="elec_kwh" type="number" min="0" step="0.1" required></div>
-          <label><input id="elec_estimado" type="checkbox"> Dato estimado (no conozco el kWh exacto de la factura)</label>
-        </fieldset>
-        <fieldset>
-          <legend>2. Gas natural residencial (Opcional)</legend>
-          <div class="campo"><label for="gas_m3">Consumo anual (m3/ano) <span class="etiqueta-opt">(Opcional)</span></label><input id="gas_m3" type="number" min="0" step="0.1"></div>
-        </fieldset>
-        <fieldset>
-          <legend>3. Desplazamiento al campus (Obligatoria)</legend>
-          <div class="campo">
-            <label for="modo_transporte">Modo principal de transporte <span class="etiqueta-req">*</span></label>
-            <select id="modo_transporte">
-              <option value="TRANSP_BUS_CO">Transporte publico / Bus / SITP</option>
-              <option value="TRANSP_AUTO_CO">Vehiculo particular</option>
-              <option value="TRANSP_MOTO_CO">Motocicleta</option>
-              <option value="TRANSP_BICI_PIE">Bicicleta o caminata</option>
-            </select>
-          </div>
-          <div class="campo"><label for="km_campus">Kilometros anuales ida y vuelta al campus <span class="etiqueta-req">*</span></label><input id="km_campus" type="number" min="0" step="1" required></div>
-        </fieldset>
-        <button type="button" id="btn-borrador" class="btn-secundario">Guardar borrador</button>
-        <button type="submit" class="btn-primario">Enviar y calcular huella</button>
-      </form>
-      <div id="estado-encuesta" aria-live="polite"></div>
+    <p id="info-periodo" class="periodo-meta">Verificando periodo activo y consentimiento...</p>
+
+    <section class="wizard-card" aria-live="polite">
+      <div class="wizard-top">
+        <span id="wizard-step-label" class="wizard-step-label">TU CASA Â· 1 DE 11</span>
+        <div class="huella-pill">
+          <span>ðŸ‘£</span>
+          <span>Tu huella va en <strong id="huella-vivo">0,0 kg COâ‚‚e</strong></span>
+        </div>
+      </div>
+
+      <div class="wizard-progress-track">
+        <div id="wizard-progress-bar" class="wizard-progress-bar"></div>
+      </div>
+
+      <div id="wizard-body"></div>
+
+      <div class="wizard-nav">
+        <button type="button" id="btn-atras" class="btn-wizard-back">â† AtrÃ¡s</button>
+        <button type="button" id="btn-siguiente" class="btn-wizard-next">Siguiente â†’</button>
+      </div>
+
+      <div id="estado-encuesta" style="margin-top:1rem;"></div>
     </section>
   </main>
+
   <script type="module" src="./js/encuesta.js"></script>
 </body>
 </html>
