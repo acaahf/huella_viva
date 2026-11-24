@@ -1,18 +1,24 @@
 import { supabase } from "./supabaseClient.js";
-import { $, msg, requireUser } from "./ui.js";
+import { mostrarMensaje } from "./ui.js";
 
-const user = await requireUser();
-if (user) {
-  const { data: v } = await supabase.from("consent_versions").select("*").eq("active", true)
-    .order("id", { ascending: false }).limit(1).maybeSingle();
-  if (!v) msg("No hay un aviso de consentimiento activo.", true);
-  else {
-    $("#texto").textContent = v.texto; $("#version").textContent = v.version;
-    $("#aceptar").addEventListener("click", async () => {
-      if (!$("#chk").checked) return msg("Marca la casilla para continuar.", true);
-      const { error } = await supabase.from("consents").insert({ profile_id: user.id, consent_version_id: v.id });
-      if (error) return msg(error.message, true);
-      location.href = "encuesta.html";
-    });
-  }
+const avisoEl = document.getElementById("texto-aviso");
+const form = document.getElementById("form-consentimiento");
+const estado = document.getElementById("estado-consentimiento");
+let versionActiva = null;
+
+async function cargarAviso() {
+  const { data } = await supabase.from("consent_versions").select("*").eq("is_active", true).single();
+  versionActiva = data;
+  if (avisoEl && data) avisoEl.textContent = data.notice_text;
 }
+
+form?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !versionActiva) return mostrarMensaje(estado, "Inicie sesion primero.", "error");
+  const { error } = await supabase.from("consents").upsert({ user_id: user.id, consent_version_id: versionActiva.id });
+  if (error) return mostrarMensaje(estado, error.message, "error");
+  window.location.href = "./encuesta.html";
+});
+
+cargarAviso();

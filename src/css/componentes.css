@@ -1,0 +1,8 @@
+.tarjeta { background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio); padding: 1.5rem; margin-bottom: 1.25rem; }
+.btn-primario, .btn-secundario, .btn-nav { display: inline-block; padding: 0.65rem 1.2rem; border-radius: var(--radio); font-weight: 600; text-decoration: none; cursor: pointer; border: none; font-size: 0.95rem; }
+.btn-primario { background: var(--color-verde-amb); color: #fff; }
+.btn-secundario { background: var(--color-uan-azul); color: #fff; }
+.btn-nav { color: #fff; border: 1px solid rgba(255,255,255,0.4); margin-left: 0.5rem; }
+.mensaje-estado { padding: 0.75rem; border-radius: var(--radio); margin-top: 1rem; font-weight: 500; }
+.mensaje-error { background: #fee2e2; color: var(--color-error); border: 1px solid var(--color-error); }
+.mensaje-exito { background: #dcfce7; color: var(--color-verde-amb); border: 1px solid var(--color-verde-amb); }

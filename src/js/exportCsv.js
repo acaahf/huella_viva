@@ -1,8 +1,26 @@
-// CSV de agregados. Neutraliza celdas que empiezan con = + - @ (inyección de fórmulas). UTF-8 con BOM.
-const seguro = (v) => { let t = String(v ?? ""); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
-export function descargarCsv(filas, nombre = "huellaviva_agregados.csv") {
-  const cols = ["grupo", "categoria", "participantes", "promedio_kgco2e", "mediana_kgco2e"];
-  const csv = [cols.join(","), ...filas.map((f) => cols.map((c) => seguro(f[c])).join(","))].join("\r\n");
-  const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }));
-  const a = document.createElement("a"); a.href = url; a.download = nombre; a.click(); URL.revokeObjectURL(url);
+const FORMULA_PREFIXES = ["=", "+", "-", "@", "\t", "\r"];
+
+export function sanitizarCeldaCsv(valor) {
+  if (valor === null || valor === undefined) return "";
+  let texto = String(valor);
+  if (FORMULA_PREFIXES.some((p) => texto.startsWith(p))) texto = `'${texto}`;
+  if (texto.includes(",") || texto.includes('"') || texto.includes("\n")) {
+    texto = `"${texto.replace(/"/g, '""')}"`;
+  }
+  return texto;
+}
+
+export function generarCsvAgregado(filas) {
+  const encabezados = ["Tipo de Usuario", "Campus", "Participantes", "Promedio (kg CO2e)", "Mediana (kg CO2e)", "Oculto (<10)"];
+  const lineas = [encabezados.map(sanitizarCeldaCsv).join(",")];
+  for (const f of filas) {
+    const oculto = Boolean(f.oculto_por_privacidad) || Number(f.participantes) < 10;
+    lineas.push([
+      f.tipo_usuario, f.campus, f.participantes,
+      oculto ? "OCULTO (<10)" : f.promedio_kgco2e,
+      oculto ? "OCULTO (<10)" : f.mediana_kgco2e,
+      oculto ? "Si" : "No"
+    ].map(sanitizarCeldaCsv).join(","));
+  }
+  return "\uFEFF" + lineas.join("\r\n");
 }

@@ -1,0 +1,7 @@
+.campo { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.campo label { font-weight: 600; color: var(--color-texto); }
+.campo input, .campo select, .campo textarea { padding: 0.6rem; border: 1px solid var(--color-borde); border-radius: var(--radio); font-size: 1rem; width: 100%; }
+.etiqueta-req { color: var(--color-error); font-size: 0.85rem; }
+.etiqueta-opt { color: var(--color-texto-sec); font-size: 0.85rem; }
+fieldset { border: 1px solid var(--color-borde); border-radius: var(--radio); padding: 1rem; margin-bottom: 1.25rem; }
+legend { font-weight: 700; color: var(--color-uan-azul); padding: 0 0.5rem; }

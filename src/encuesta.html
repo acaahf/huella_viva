@@ -1,41 +1,43 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Encuesta de actividad - HuellaViva UAN</title>
-  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+<html lang="es-CO">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Encuesta â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/formularios.css"></head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header>
-    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
-    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
-  </header>
-  <nav aria-label="Principal">
-    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
-    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
-    <button id="salir" type="button">Salir</button>
-  </nav>
-  <main id="contenido">
-    <h1>Encuesta de actividad</h1>
-    <p id="msg" role="status" aria-live="polite"></p>
-    <p>Periodo: <strong id="periodo">-</strong>. Preguntas con * son obligatorias.</p>
-    <div id="form" class="tarjeta">
-      <h2>Electricidad del hogar</h2>
-      <label for="kwh">Consumo del hogar en el periodo (kWh) *</label><input id="kwh" type="number" min="0" max="20000" step="any" inputmode="decimal">
-      <label for="personas">Personas que comparten ese consumo *</label><input id="personas" type="number" min="1" max="30" step="1" value="1">
-      <label><input id="estimado" type="checkbox">Este dato es una estimación (no lo tomé de mi factura)</label>
-      <p id="vista" aria-live="polite"></p>
-      <button id="guardar" type="button">Guardar borrador</button><button id="enviar" type="button">Enviar y calcular</button>
-    </div>
-    <div class="tarjeta"><h2>Categorías sin factor verificado</h2>
-      <p>Transporte, gas y otros combustibles, viajes aéreos, alimentación y residuos no se incluyen en el total hasta cargar factores con fuente y año.</p></div>
-      <button id="reabrir" type="button" hidden>Editar mi encuesta (se borra el cálculo y debes reenviar)</button>
+  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
+  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <main class="contenedor">
+    <section class="tarjeta">
+      <h1>Encuesta de Actividad (Reporte Anualizado)</h1>
+      <p id="info-periodo">Verificando periodo activo y consentimiento...</p>
+      <form id="form-encuesta">
+        <fieldset>
+          <legend>1. Electricidad del hogar (Obligatoria)</legend>
+          <div class="campo"><label for="personas_hogar">Personas que comparten el hogar <span class="etiqueta-req">*</span></label><input id="personas_hogar" type="number" min="1" max="20" value="1" required></div>
+          <div class="campo"><label for="elec_kwh">Consumo anual estimado (kWh/ano) <span class="etiqueta-req">*</span></label><input id="elec_kwh" type="number" min="0" step="0.1" required></div>
+          <label><input id="elec_estimado" type="checkbox"> Dato estimado (no conozco el kWh exacto de la factura)</label>
+        </fieldset>
+        <fieldset>
+          <legend>2. Gas natural residencial (Opcional)</legend>
+          <div class="campo"><label for="gas_m3">Consumo anual (m3/ano) <span class="etiqueta-opt">(Opcional)</span></label><input id="gas_m3" type="number" min="0" step="0.1"></div>
+        </fieldset>
+        <fieldset>
+          <legend>3. Desplazamiento al campus (Obligatoria)</legend>
+          <div class="campo">
+            <label for="modo_transporte">Modo principal de transporte <span class="etiqueta-req">*</span></label>
+            <select id="modo_transporte">
+              <option value="TRANSP_BUS_CO">Transporte publico / Bus / SITP</option>
+              <option value="TRANSP_AUTO_CO">Vehiculo particular</option>
+              <option value="TRANSP_MOTO_CO">Motocicleta</option>
+              <option value="TRANSP_BICI_PIE">Bicicleta o caminata</option>
+            </select>
+          </div>
+          <div class="campo"><label for="km_campus">Kilometros anuales ida y vuelta al campus <span class="etiqueta-req">*</span></label><input id="km_campus" type="number" min="0" step="1" required></div>
+        </fieldset>
+        <button type="button" id="btn-borrador" class="btn-secundario">Guardar borrador</button>
+        <button type="submit" class="btn-primario">Enviar y calcular huella</button>
+      </form>
+      <div id="estado-encuesta" aria-live="polite"></div>
+    </section>
   </main>
-  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
-  <script type="module" src="js/encuesta.js"></script>
-  <script type="module" src="js/encuestaExtra.js"></script>
+  <script type="module" src="./js/encuesta.js"></script>
 </body>
 </html>

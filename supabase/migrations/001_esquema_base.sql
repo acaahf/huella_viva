@@ -1,67 +1,142 @@
--- 001_esquema_base.sql : esquema HuellaViva UAN
-create extension if not exists pgcrypto;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-create table profiles(
-  id uuid primary key references auth.users on delete cascade,
-  tipo_usuario text not null check (tipo_usuario in ('estudiante','profesor','administrativo')),
-  campus text, estado text not null default 'activo', created_at timestamptz not null default now());
+CREATE TABLE public.admin_roles (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    role_type TEXT NOT NULL CHECK (role_type IN ('admin_ambiental', 'admin_tecnico')),
+    assigned_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
--- Rol administrativo: tabla sin políticas RLS (solo editable por SQL/service_role, nunca por el usuario)
-create table admin_roles(user_id uuid primary key references auth.users on delete cascade,
-  rol text not null check (rol in ('ambiental','tecnico')));
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    tipo_usuario TEXT NOT NULL CHECK (tipo_usuario IN ('estudiante', 'profesor', 'administrativo')),
+    campus TEXT CHECK (campus IN ('Bogota_Circunvalar', 'Bogota_Sur', 'Bogota_Federman', 'Medellin', 'Cali', 'Otro')),
+    estado TEXT NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo', 'inactivo', 'supresion_solicitada')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-create table consent_versions(id serial primary key, version text unique not null, texto text not null,
-  purpose text not null, valid_from date not null default current_date, active boolean not null default true);
+CREATE TABLE public.consent_versions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    version_code TEXT NOT NULL UNIQUE,
+    notice_text TEXT NOT NULL,
+    effective_from DATE NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-create table consents(id uuid primary key default gen_random_uuid(),
-  profile_id uuid not null references profiles on delete cascade,
-  consent_version_id int not null references consent_versions,
-  accepted_at timestamptz not null default now(), revoked_at timestamptz);
+CREATE TABLE public.consents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    consent_version_id UUID NOT NULL REFERENCES public.consent_versions(id),
+    accepted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    revoked_at TIMESTAMPTZ,
+    UNIQUE (user_id, consent_version_id)
+);
 
-create table survey_periods(id serial primary key, name text not null, start_date date not null,
-  end_date date not null, methodology_version text not null default 'v1',
-  status text not null default 'abierto' check (status in ('abierto','cerrado')), check (end_date >= start_date));
+CREATE TABLE public.survey_periods (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    reporting_granularity TEXT NOT NULL DEFAULT 'anual' CHECK (reporting_granularity IN ('mensual', 'anual')),
+    starts_at TIMESTAMPTZ NOT NULL,
+    ends_at TIMESTAMPTZ NOT NULL,
+    is_open BOOLEAN NOT NULL DEFAULT false,
+    expected_population INTEGER CHECK (expected_population IS NULL OR expected_population > 0),
+    population_source TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CHECK (ends_at > starts_at)
+);
 
-create table surveys(id uuid primary key default gen_random_uuid(),
-  profile_id uuid not null references profiles on delete cascade,
-  period_id int not null references survey_periods,
-  status text not null default 'borrador' check (status in ('borrador','enviada')),
-  submitted_at timestamptz, updated_at timestamptz not null default now(), unique(profile_id, period_id));
+CREATE TABLE public.surveys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    period_id UUID NOT NULL REFERENCES public.survey_periods(id),
+    consent_id UUID NOT NULL REFERENCES public.consents(id),
+    status TEXT NOT NULL DEFAULT 'borrador' CHECK (status IN ('borrador', 'enviada')),
+    submitted_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (user_id, period_id)
+);
 
-create table activity_answers(id uuid primary key default gen_random_uuid(),
-  survey_id uuid not null references surveys on delete cascade,
-  category text not null, question_code text not null,
-  numeric_value numeric check (numeric_value between 0 and 100000), text_value text,
-  unit text not null, is_estimated boolean not null default false, unique(survey_id, question_code));
+CREATE TABLE public.activity_answers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    survey_id UUID NOT NULL REFERENCES public.surveys(id) ON DELETE CASCADE,
+    category TEXT NOT NULL CHECK (category IN ('electricidad', 'gas_combustibles', 'desplazamiento_campus', 'viajes_aereos', 'alimentacion', 'residuos')),
+    question_code TEXT NOT NULL,
+    numeric_value NUMERIC(12,4) CHECK (numeric_value IS NULL OR numeric_value >= 0),
+    text_value TEXT,
+    unit TEXT NOT NULL,
+    is_estimated BOOLEAN NOT NULL DEFAULT false,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (survey_id, question_code)
+);
 
--- Factores versionados e inmutables: para cambiar un valor se inserta una versión nueva
-create table emission_factors(id serial primary key, category text not null, question_code text not null,
-  factor_value numeric not null check (factor_value >= 0),
-  unit_activity text not null, unit_emission text not null default 'kgCO2e',
-  geography text not null, source text not null, source_url text not null,
-  reference_year int not null, valid_from date not null, valid_to date,
-  version int not null default 1, approved_by uuid references auth.users,
-  loaded_at timestamptz not null default now(), unique(question_code, version));
+CREATE TABLE public.emission_factors (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    category TEXT NOT NULL,
+    factor_code TEXT NOT NULL,
+    value NUMERIC(14,6) NOT NULL CHECK (value >= 0),
+    activity_unit TEXT NOT NULL,
+    emission_unit TEXT NOT NULL DEFAULT 'kg CO2e',
+    gas_equivalence TEXT NOT NULL DEFAULT 'CO2e',
+    geography TEXT NOT NULL,
+    source_name TEXT NOT NULL,
+    source_url TEXT NOT NULL,
+    reference_year INTEGER NOT NULL CHECK (reference_year >= 2000 AND reference_year <= 2100),
+    valid_from DATE NOT NULL,
+    valid_to DATE,
+    method TEXT NOT NULL,
+    version TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    loaded_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    approved_by UUID REFERENCES auth.users(id),
+    UNIQUE (factor_code, version)
+);
 
-create table calculations(id uuid primary key default gen_random_uuid(),
-  survey_id uuid not null unique references surveys on delete cascade,
-  methodology_version text not null, total_kgco2e numeric not null, calculated_at timestamptz not null default now());
+CREATE TABLE public.calculations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    survey_id UUID NOT NULL REFERENCES public.surveys(id) ON DELETE CASCADE,
+    method_version TEXT NOT NULL,
+    total_kgco2e NUMERIC(14,4) NOT NULL CHECK (total_kgco2e >= 0),
+    has_estimated_inputs BOOLEAN NOT NULL DEFAULT false,
+    excluded_categories JSONB NOT NULL DEFAULT '[]'::jsonb,
+    calculated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-create table calculation_details(id uuid primary key default gen_random_uuid(),
-  calculation_id uuid not null references calculations on delete cascade,
-  answer_id uuid not null references activity_answers on delete cascade,
-  factor_id int not null references emission_factors,
-  activity_value numeric not null, converted_value numeric not null, emissions_kgco2e numeric not null);
+CREATE TABLE public.calculation_details (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    calculation_id UUID NOT NULL REFERENCES public.calculations(id) ON DELETE CASCADE,
+    answer_id UUID REFERENCES public.activity_answers(id) ON DELETE SET NULL,
+    factor_id UUID NOT NULL REFERENCES public.emission_factors(id),
+    category TEXT NOT NULL,
+    activity_value NUMERIC(14,4) NOT NULL,
+    converted_value NUMERIC(14,4) NOT NULL,
+    emissions_kgco2e NUMERIC(14,4) NOT NULL CHECK (emissions_kgco2e >= 0)
+);
 
-create table admin_audit_log(id bigserial primary key, actor_id uuid, action text not null, entity text not null,
-  entity_id text, before_json jsonb, after_json jsonb, created_at timestamptz not null default now());
+CREATE TABLE public.admin_audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    actor_user_id UUID NOT NULL REFERENCES auth.users(id),
+    table_name TEXT NOT NULL,
+    record_id UUID NOT NULL,
+    action TEXT NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
+    before_json JSONB,
+    after_json JSONB,
+    justification TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-create table data_rights_requests(id uuid primary key default gen_random_uuid(),
-  profile_id uuid not null references profiles on delete cascade,
-  tipo text not null check (tipo in ('correccion','retiro','supresion')),
-  detalle text check (char_length(detalle) <= 1000),
-  estado text not null default 'recibida' check (estado in ('recibida','en_tramite','atendida')),
-  created_at timestamptz not null default now());
+CREATE TABLE public.data_rights_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    request_type TEXT NOT NULL CHECK (request_type IN ('correccion', 'retiro_consentimiento', 'supresion', 'consulta')),
+    description TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'recibida' CHECK (status IN ('recibida', 'en_revision', 'atendida', 'rechazada')),
+    response_note TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-create index on surveys(period_id); create index on activity_answers(survey_id);
-create index on calculation_details(calculation_id); create index on emission_factors(question_code, valid_from);
+CREATE INDEX idx_surveys_period_status ON public.surveys(period_id, status);
+CREATE INDEX idx_answers_survey ON public.activity_answers(survey_id);
+CREATE INDEX idx_calc_survey ON public.calculations(survey_id);
+CREATE INDEX idx_factors_active ON public.emission_factors(category, is_active);

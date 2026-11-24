@@ -1,9 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="t">
-  <title id="t">HuellaViva UAN</title>
-  <ellipse cx="50" cy="66" rx="22" ry="27" fill="#1f7a4d"/>
-  <ellipse cx="50" cy="66" rx="16" ry="21" fill="none" stroke="#0b3d91" stroke-width="2"/>
-  <ellipse cx="50" cy="66" rx="10" ry="15" fill="none" stroke="#0b3d91" stroke-width="2"/>
-  <ellipse cx="50" cy="66" rx="4" ry="9" fill="none" stroke="#0b3d91" stroke-width="2"/>
-  <circle cx="30" cy="30" r="6" fill="#0b3d91"/><circle cx="43" cy="22" r="6.5" fill="#1f7a4d"/>
-  <circle cx="58" cy="22" r="6.5" fill="#0b3d91"/><circle cx="71" cy="30" r="6" fill="#1f7a4d"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Logotipo HuellaViva UAN</title>
+  <desc id="logoDesc">Huella de pie con lineas internas de huella digital en azul oscuro y verde ambiental.</desc>
+  <ellipse cx="40" cy="24" rx="7" ry="10" fill="#1B7F5C" transform="rotate(-12 40 24)" />
+  <ellipse cx="56" cy="20" rx="5.5" ry="8" fill="#1B7F5C" transform="rotate(-4 56 20)" />
+  <ellipse cx="69" cy="23" rx="5" ry="7" fill="#1B7F5C" transform="rotate(6 69 23)" />
+  <ellipse cx="80" cy="30" rx="4.5" ry="6.5" fill="#1B7F5C" transform="rotate(14 80 30)" />
+  <ellipse cx="88" cy="40" rx="4" ry="5.5" fill="#1B7F5C" transform="rotate(22 88 40)" />
+  <path d="M36 42 C30 56, 38 72, 44 86 C48 98, 60 106, 72 102 C84 98, 86 82, 82 68 C78 54, 72 40, 56 38 C46 37, 40 38, 36 42 Z" fill="#0B2D52" />
+  <path d="M46 54 C52 46, 66 48, 70 58 C74 68, 72 82, 66 90" fill="none" stroke="#6EE7B7" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M50 62 C55 56, 63 58, 65 66 C67 74, 64 84, 58 88" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+  <path d="M55 70 C58 67, 60 70, 59 76 C58 80, 55 82, 52 80" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" />
 </svg>

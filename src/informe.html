@@ -1,41 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Informe individual - HuellaViva UAN</title>
-  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+<html lang="es-CO">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mi Informe â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/dashboard.css"><link rel="stylesheet" href="./css/impresion.css"></head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header>
-    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
-    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
-  </header>
-  <nav aria-label="Principal">
-    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
-    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
-    <button id="salir" type="button">Salir</button>
-  </nav>
-  <main id="contenido">
-    <h1>Informe individual</h1>
-    <p id="msg" role="status" aria-live="polite"></p>
-    <section id="informe" hidden>
-      <div class="tarjeta"><p>Total estimado del periodo</p><p class="total" id="total"></p><p id="fecha"></p></div>
-      <div class="tabla"><table><caption>Desglose por categoría</caption>
-        <thead><tr><th>Categoría</th><th>Actividad</th><th>Factor</th><th>kg CO2e</th><th>Tipo de dato</th><th>Fuente</th></tr></thead>
-        <tbody id="filas"></tbody></table></div>
-      <div class="tarjeta"><h2>Limitaciones</h2>
-        <ul><li>Estimación académica: no es inventario verificado, certificación ni compensación.</li>
-        <li>Solo incluye las categorías con factor documentado; el total es un piso parcial, no tu huella completa.</li>
-        <li>Si el dato fue estimado, la incertidumbre es mayor.</li></ul>
-        <h2>Recomendaciones</h2>
-        <ul><li>Revisa tu factura para pasar de dato estimado a medido.</li><li>Apagar equipos en espera y priorizar iluminación eficiente ayuda a reducir consumo.</li></ul></div>
-      <button id="imprimir" type="button">Imprimir</button>
+  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
+  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <main class="contenedor">
+    <section class="tarjeta">
+      <h1>Informe Individual de Huella de Carbono</h1>
+      <div id="contenedor-informe">Cargando resultado...</div>
+      <div class="acciones-no-imprimir"><button id="btn-imprimir" class="btn-secundario" type="button">Imprimir / Guardar PDF</button></div>
     </section>
   </main>
-  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
-  <script type="module" src="js/informe.js"></script>
+  <script type="module" src="./js/informe.js"></script>
 </body>
 </html>

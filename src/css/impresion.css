@@ -1,0 +1,5 @@
+@media print {
+  .cabecera-principal nav, .acciones-no-imprimir { display: none; }
+  body { background: #fff; color: #000; }
+  .tarjeta { border: 1px solid #000; break-inside: avoid; }
+}

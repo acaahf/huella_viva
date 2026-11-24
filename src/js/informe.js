@@ -1,28 +1,51 @@
 import { supabase } from "./supabaseClient.js";
-import { $, msg, requireUser, celda } from "./ui.js";
 
-$("#imprimir")?.addEventListener("click", () => window.print());
-const user = await requireUser();
-if (user) {
-  const { data: c, error } = await supabase.from("calculations")
-    .select("total_kgco2e, calculated_at, methodology_version, calculation_details(activity_value, converted_value, emissions_kgco2e, emission_factors(category, factor_value, unit_activity, source, source_url, reference_year, version), activity_answers(is_estimated))")
-    .order("calculated_at", { ascending: false }).limit(1).maybeSingle();
-  if (error) msg(error.message, true);
-  else if (!c) msg("Aún no tienes un informe. Envía tu encuesta primero.");
-  else {
-    $("#informe").hidden = false;
-    $("#total").textContent = `${Number(c.total_kgco2e).toFixed(2)} kg CO2e`;
-    $("#fecha").textContent = `Calculado el ${new Date(c.calculated_at).toLocaleString("es-CO")} · método ${c.methodology_version}`;
-    const cuerpo = $("#filas");
-    for (const d of c.calculation_details) {
-      const f = d.emission_factors, tr = document.createElement("tr");
-      tr.append(celda(f.category), celda(`${d.activity_value} (por persona: ${Number(d.converted_value).toFixed(2)} ${f.unit_activity})`),
-        celda(`${f.factor_value} kgCO2e/${f.unit_activity} (v${f.version}, ${f.reference_year})`),
-        celda(Number(d.emissions_kgco2e).toFixed(2)), celda(d.activity_answers?.is_estimated ? "Estimado" : "Medido/declarado"));
-      const td = document.createElement("td");
-      if (/^https:\/\//.test(f.source_url)) { const a = document.createElement("a"); a.href = f.source_url; a.textContent = f.source; a.rel = "noopener"; td.append(a); }
-      else td.textContent = f.source;
-      tr.append(td); cuerpo.append(tr);
-    }
+const contenedor = document.getElementById("contenedor-informe");
+const btnImprimir = document.getElementById("btn-imprimir");
+btnImprimir?.addEventListener("click", () => window.print());
+
+async function cargarInforme() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "./login.html";
+    return;
   }
+
+  const { data: calc } = await supabase
+    .from("calculations")
+    .select("*, surveys!inner(user_id, period_id), calculation_details(*, emission_factors(source_name, version, value, activity_unit))")
+    .eq("surveys.user_id", user.id)
+    .order("calculated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!calc) {
+    contenedor.textContent = "Aun no tienes una encuesta enviada. Completa la encuesta para generar tu informe.";
+    return;
+  }
+
+  const totalTon = (Number(calc.total_kgco2e) / 1000).toFixed(4);
+  const filasHtml = (calc.calculation_details || []).map((d) => `
+    <tr>
+      <td>${d.category}</td>
+      <td>${d.converted_value} ${d.emission_factors?.activity_unit || ""}</td>
+      <td>${d.emission_factors?.value} (v${d.emission_factors?.version})</td>
+      <td><strong>${d.emissions_kgco2e} kg CO2e</strong></td>
+      <td>${d.emission_factors?.source_name || ""}</td>
+    </tr>
+  `).join("");
+
+  contenedor.innerHTML = `
+    <p><strong>Huella anual estimada:</strong> ${calc.total_kgco2e} kg CO2e (${totalTon} t CO2e/ano)</p>
+    <p><strong>Fecha de calculo:</strong> ${new Date(calc.calculated_at).toLocaleString("es-CO")} | <strong>Metodo:</strong> ${calc.method_version}</p>
+    <p><strong>Contiene datos estimados:</strong> ${calc.has_estimated_inputs ? "Si (mayor incertidumbre)" : "No (datos directos ingresados)"}</p>
+    <table class="tabla-datos">
+      <thead><tr><th>Categoria</th><th>Actividad ajustada</th><th>Factor</th><th>Emisiones</th><th>Fuente</th></tr></thead>
+      <tbody>${filasHtml}</tbody>
+    </table>
+    <h3>Limites y recomendaciones</h3>
+    <p>Categorias sin factor nacional verificado (alimentacion, residuos) estan excluidas del total. Prioriza movilidad activa o transporte publico y eficiencia energetica en el hogar.</p>
+  `;
 }
+
+cargarInforme();

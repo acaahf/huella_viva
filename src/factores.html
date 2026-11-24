@@ -1,45 +1,15 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestión de factores de emisión - HuellaViva UAN</title>
-  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+<html lang="es-CO">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Factores â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/dashboard.css"></head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header>
-    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
-    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
-  </header>
-  <nav aria-label="Principal">
-    <a href="index.html">Inicio</a> <a href="admin.html">Dashboard</a> <a href="factores.html">Factores</a>
-    <a href="periodos.html">Periodos</a> <a href="solicitudes.html">Solicitudes</a>
-    <button id="salir" type="button">Salir</button>
-  </nav>
-  <main id="contenido">
-    <h1>Gestión de factores de emisión</h1>
-    <p id="msg" role="status" aria-live="polite"></p>
-    <div class="tarjeta"><h2>Publicar nueva versión de un factor</h2>
-      <p>Solo con fuente oficial verificable (URL https), año y justificación. La versión anterior se cierra y los cálculos previos no cambian.</p>
-      <div class="fila">
-        <div><label for="categoria">Categoría</label><input id="categoria" value="electricidad"></div>
-        <div><label for="pregunta">Código de pregunta</label><input id="pregunta" value="elec_kwh"></div>
-        <div><label for="valor">Factor (kgCO2e por unidad)</label><input id="valor" type="number" step="any" min="0"></div>
-        <div><label for="unidad">Unidad de actividad</label><input id="unidad" value="kWh"></div>
-        <div><label for="geo">Geografía</label><input id="geo" value="Colombia"></div>
-        <div><label for="anio">Año de referencia</label><input id="anio" type="number" min="1990" max="2100"></div>
-        <div><label for="desde">Vigente desde</label><input id="desde" type="date"></div>
-      </div>
-      <label for="fuente">Fuente (nombre del documento)</label><input id="fuente">
-      <label for="url">URL de la fuente</label><input id="url" type="url" placeholder="https://">
-      <label for="just">Justificación del cambio</label><textarea id="just" rows="2"></textarea>
-      <button id="publicar" type="button">Publicar versión</button></div>
-    <div class="tabla"><table><caption>Factores cargados</caption>
-      <thead><tr><th>Código</th><th>Valor</th><th>Versión</th><th>Año</th><th>Vigencia</th><th>Fuente</th><th>Justificación</th></tr></thead><tbody id="filas"></tbody></table></div>
+  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
+  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <main class="contenedor">
+    <section class="tarjeta">
+      <h1>Gestion de Factores de Emision Versionados</h1>
+      <div id="lista-factores">Cargando factores...</div>
+    </section>
   </main>
-  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
-  <script type="module" src="js/adminFactores.js"></script>
+  <script type="module" src="./js/adminFactores.js"></script>
 </body>
 </html>

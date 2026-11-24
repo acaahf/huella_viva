@@ -1,109 +1,86 @@
--- 002_rls_triggers_y_agregados.sql : RLS, auditoría, cálculo y agregados protegidos
-create function is_admin() returns boolean language sql security definer set search_path = public stable
-as $$ select exists(select 1 from admin_roles where user_id = auth.uid()) $$;
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_roles WHERE user_id = auth.uid());
+$$;
 
-alter table profiles enable row level security;            alter table admin_roles enable row level security;
-alter table consent_versions enable row level security;    alter table consents enable row level security;
-alter table survey_periods enable row level security;      alter table surveys enable row level security;
-alter table activity_answers enable row level security;    alter table emission_factors enable row level security;
-alter table calculations enable row level security;        alter table calculation_details enable row level security;
-alter table admin_audit_log enable row level security;     alter table data_rights_requests enable row level security;
--- admin_roles: sin políticas = nadie accede desde la API
+ALTER TABLE public.admin_roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.consent_versions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.consents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.survey_periods ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.surveys ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.activity_answers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.emission_factors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.calculations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.calculation_details ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_audit_log ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.data_rights_requests ENABLE ROW LEVEL SECURITY;
 
-create policy p_prof_sel on profiles for select to authenticated using (id = auth.uid());
-create policy p_prof_ins on profiles for insert to authenticated with check (id = auth.uid());
-create policy p_prof_upd on profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+CREATE POLICY "profiles_own" ON public.profiles FOR ALL USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY "admin_roles_select_own" ON public.admin_roles FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "consent_versions_read" ON public.consent_versions FOR SELECT TO authenticated USING (true);
+CREATE POLICY "consents_own" ON public.consents FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "periods_read" ON public.survey_periods FOR SELECT TO authenticated USING (true);
+CREATE POLICY "periods_admin" ON public.survey_periods FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "factors_read" ON public.emission_factors FOR SELECT TO authenticated USING (true);
+CREATE POLICY "factors_admin_ins" ON public.emission_factors FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "factors_admin_upd" ON public.emission_factors FOR UPDATE USING (public.is_admin());
+CREATE POLICY "surveys_own" ON public.surveys FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "answers_own" ON public.activity_answers FOR ALL
+  USING (EXISTS (SELECT 1 FROM public.surveys s WHERE s.id = survey_id AND s.user_id = auth.uid()))
+  WITH CHECK (EXISTS (SELECT 1 FROM public.surveys s WHERE s.id = survey_id AND s.user_id = auth.uid()));
+CREATE POLICY "calculations_own" ON public.calculations FOR ALL
+  USING (EXISTS (SELECT 1 FROM public.surveys s WHERE s.id = survey_id AND s.user_id = auth.uid()))
+  WITH CHECK (EXISTS (SELECT 1 FROM public.surveys s WHERE s.id = survey_id AND s.user_id = auth.uid()));
+CREATE POLICY "calc_details_own" ON public.calculation_details FOR ALL
+  USING (EXISTS (SELECT 1 FROM public.calculations c JOIN public.surveys s ON s.id = c.survey_id WHERE c.id = calculation_id AND s.user_id = auth.uid()));
+CREATE POLICY "audit_admin_sel" ON public.admin_audit_log FOR SELECT USING (public.is_admin());
+CREATE POLICY "audit_admin_ins" ON public.admin_audit_log FOR INSERT WITH CHECK (public.is_admin());
+CREATE POLICY "rights_sel" ON public.data_rights_requests FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "rights_ins" ON public.data_rights_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "rights_upd" ON public.data_rights_requests FOR UPDATE USING (public.is_admin());
 
-create policy p_cv_sel on consent_versions for select to authenticated using (true);
-create policy p_con_sel on consents for select to authenticated using (profile_id = auth.uid());
-create policy p_con_ins on consents for insert to authenticated with check (profile_id = auth.uid());
-create policy p_con_upd on consents for update to authenticated using (profile_id = auth.uid()) with check (profile_id = auth.uid());
+CREATE OR REPLACE FUNCTION public.prevent_used_factor_mutation()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  IF (OLD.value IS DISTINCT FROM NEW.value OR OLD.activity_unit IS DISTINCT FROM NEW.activity_unit) THEN
+    IF EXISTS (SELECT 1 FROM public.calculation_details WHERE factor_id = OLD.id) THEN
+      RAISE EXCEPTION 'Factor inmutable: ya fue utilizado en calculos. Cree una nueva version.';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
 
-create policy p_per_sel on survey_periods for select to authenticated using (true);
-create policy p_per_adm on survey_periods for all to authenticated using (is_admin()) with check (is_admin());
+CREATE TRIGGER trg_factor_immutability
+BEFORE UPDATE ON public.emission_factors FOR EACH ROW EXECUTE FUNCTION public.prevent_used_factor_mutation();
 
-create policy p_sur_sel on surveys for select to authenticated using (profile_id = auth.uid());
-create policy p_sur_ins on surveys for insert to authenticated with check (profile_id = auth.uid()
-  and exists(select 1 from consents c where c.profile_id = auth.uid() and c.revoked_at is null));
-create policy p_sur_upd on surveys for update to authenticated using (profile_id = auth.uid() and status = 'borrador')
-  with check (profile_id = auth.uid());
-
-create policy p_ans_sel on activity_answers for select to authenticated
-  using (exists(select 1 from surveys s where s.id = survey_id and s.profile_id = auth.uid()));
-create policy p_ans_ins on activity_answers for insert to authenticated
-  with check (exists(select 1 from surveys s where s.id = survey_id and s.profile_id = auth.uid() and s.status = 'borrador'));
-create policy p_ans_upd on activity_answers for update to authenticated
-  using (exists(select 1 from surveys s where s.id = survey_id and s.profile_id = auth.uid() and s.status = 'borrador'))
-  with check (exists(select 1 from surveys s where s.id = survey_id and s.profile_id = auth.uid() and s.status = 'borrador'));
-
-create policy p_fac_sel on emission_factors for select to authenticated using (true);
-create policy p_fac_ins on emission_factors for insert to authenticated with check (is_admin()); -- sin update/delete: inmutables
-
-create policy p_cal_sel on calculations for select to authenticated
-  using (exists(select 1 from surveys s where s.id = survey_id and s.profile_id = auth.uid()));
-create policy p_det_sel on calculation_details for select to authenticated
-  using (exists(select 1 from calculations c join surveys s on s.id = c.survey_id
-                where c.id = calculation_id and s.profile_id = auth.uid()));
-
-create policy p_aud_sel on admin_audit_log for select to authenticated using (is_admin());
-create policy p_dr_sel on data_rights_requests for select to authenticated using (profile_id = auth.uid());
-create policy p_dr_ins on data_rights_requests for insert to authenticated with check (profile_id = auth.uid());
-
--- Auditoría de cambios administrativos (factores y periodos)
-create function auditar() returns trigger language plpgsql security definer set search_path = public as $$
-begin
-  insert into admin_audit_log(actor_id, action, entity, entity_id, before_json, after_json)
-  values (auth.uid(), tg_op, tg_table_name, coalesce(new.id, old.id)::text,
-          case when tg_op <> 'INSERT' then to_jsonb(old) end, case when tg_op <> 'DELETE' then to_jsonb(new) end);
-  return coalesce(new, old);
-end $$;
-create trigger t_aud_fac after insert or update or delete on emission_factors for each row execute function auditar();
-create trigger t_aud_per after insert or update or delete on survey_periods for each row execute function auditar();
-
--- Cálculo reproducible: kWh / personas del hogar x factor (kgCO2e por kWh). Solo categorías con factor vigente.
-create function calcular_huella(p_survey uuid) returns uuid language plpgsql security definer set search_path = public as $$
-declare v_calc uuid; v_pers numeric; v_total numeric; v_met text;
-begin
-  if not exists(select 1 from surveys where id = p_survey and profile_id = auth.uid() and status = 'enviada') then
-    raise exception 'Encuesta no válida o no enviada'; end if;
-  select coalesce(max(numeric_value), 1) into v_pers from activity_answers where survey_id = p_survey and question_code = 'elec_personas';
-  select p.methodology_version into v_met from surveys s join survey_periods p on p.id = s.period_id where s.id = p_survey;
-  delete from calculations where survey_id = p_survey;
-  insert into calculations(survey_id, methodology_version, total_kgco2e) values (p_survey, v_met, 0) returning id into v_calc;
-  insert into calculation_details(calculation_id, answer_id, factor_id, activity_value, converted_value, emissions_kgco2e)
-  select v_calc, a.id, f.id, a.numeric_value, a.numeric_value / greatest(v_pers, 1), a.numeric_value / greatest(v_pers, 1) * f.factor_value
-  from activity_answers a
-  join lateral (select * from emission_factors e where e.question_code = a.question_code and e.valid_from <= current_date
-                and (e.valid_to is null or e.valid_to >= current_date) order by e.version desc limit 1) f on true
-  where a.survey_id = p_survey and a.question_code <> 'elec_personas';
-  select coalesce(sum(emissions_kgco2e), 0) into v_total from calculation_details where calculation_id = v_calc;
-  update calculations set total_kgco2e = v_total where id = v_calc;
-  return v_calc;
-end $$;
-
--- Agregados: solo administradores y solo celdas con 10 o más respuestas (regla de diseño del proyecto)
-create function dashboard_resumen(p_period int, p_grupo text default null)
-returns table(grupo text, categoria text, participantes bigint, promedio_kgco2e numeric, mediana_kgco2e numeric)
-language plpgsql security definer set search_path = public as $$
-begin
-  if not is_admin() then raise exception 'No autorizado'; end if;
-  return query
-  with x as (select p.tipo_usuario g, f.category c, s.id sid, sum(d.emissions_kgco2e) e
-             from surveys s join profiles p on p.id = s.profile_id join calculations k on k.survey_id = s.id
-             join calculation_details d on d.calculation_id = k.id join emission_factors f on f.id = d.factor_id
-             where s.period_id = p_period and s.status = 'enviada' and (p_grupo is null or p.tipo_usuario = p_grupo)
-             group by 1, 2, 3)
-  select g, c, count(*), round(avg(e), 2), round((percentile_cont(0.5) within group (order by e))::numeric, 2)
-  from x group by g, c having count(*) >= 10;
-end $$;
-
-create function dashboard_muestra(p_period int) returns bigint language plpgsql security definer set search_path = public as $$
-declare n bigint;
-begin
-  if not is_admin() then raise exception 'No autorizado'; end if;
-  select count(*) into n from surveys where period_id = p_period and status = 'enviada';
-  return case when n >= 10 then n else null end;
-end $$;
-
-revoke all on function calcular_huella(uuid), dashboard_resumen(int, text), dashboard_muestra(int), is_admin() from public, anon;
-grant execute on function calcular_huella(uuid), dashboard_resumen(int, text), dashboard_muestra(int), is_admin() to authenticated;
+CREATE OR REPLACE FUNCTION public.get_aggregated_metrics(
+    p_period_id UUID, p_campus TEXT DEFAULT NULL, p_tipo_usuario TEXT DEFAULT NULL, p_min_cell INTEGER DEFAULT 10
+)
+RETURNS TABLE (
+    tipo_usuario TEXT, campus TEXT, participantes BIGINT,
+    promedio_kgco2e NUMERIC, mediana_kgco2e NUMERIC, oculto_por_privacidad BOOLEAN
+)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Acceso denegado: se requiere rol administrativo autorizado.';
+  END IF;
+  RETURN QUERY
+  WITH base AS (
+    SELECT p.tipo_usuario, COALESCE(p.campus, 'No reportado') AS campus, c.total_kgco2e
+    FROM public.calculations c
+    JOIN public.surveys s ON s.id = c.survey_id AND s.status = 'enviada'
+    JOIN public.profiles p ON p.id = s.user_id
+    WHERE s.period_id = p_period_id
+      AND (p_campus IS NULL OR p.campus = p_campus)
+      AND (p_tipo_usuario IS NULL OR p.tipo_usuario = p_tipo_usuario)
+  )
+  SELECT b.tipo_usuario, b.campus, COUNT(*) AS participantes,
+    CASE WHEN COUNT(*) >= p_min_cell THEN ROUND(AVG(b.total_kgco2e), 2) ELSE NULL END,
+    CASE WHEN COUNT(*) >= p_min_cell THEN ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY b.total_kgco2e)::numeric, 2) ELSE NULL END,
+    (COUNT(*) < p_min_cell)
+  FROM base b GROUP BY b.tipo_usuario, b.campus;
+END;
+$$;

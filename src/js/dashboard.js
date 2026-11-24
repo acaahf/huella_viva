@@ -1,25 +1,68 @@
 import { supabase } from "./supabaseClient.js";
-import { $, msg, requireUser, celda } from "./ui.js";
-import { descargarCsv } from "./exportCsv.js";
+import { generarCsvAgregado } from "./exportCsv.js";
+import { APP_CONFIG } from "./config.js";
 
-let filas = [];
-async function consultar() {
-  const periodo = Number($("#periodo").value), grupo = $("#grupo").value || null;
-  const r = await supabase.rpc("dashboard_resumen", { p_period: periodo, p_grupo: grupo });
-  if (r.error) return msg(r.error.message === "No autorizado" ? "No tienes permisos de administrador." : r.error.message, true);
-  const m = await supabase.rpc("dashboard_muestra", { p_period: periodo });
-  filas = r.data || [];
-  $("#muestra").textContent = m.data ? `Participantes efectivos: ${m.data}. Sin denominador fiable: no se calcula tasa de respuesta ni se extrapola a la comunidad.`
-    : "Muestra menor a 10 respuestas: se ocultan las cifras para proteger la privacidad.";
-  const cuerpo = $("#filas"); cuerpo.replaceChildren();
-  for (const f of filas) { const tr = document.createElement("tr");
-    tr.append(celda(f.grupo), celda(f.categoria), celda(f.participantes), celda(f.promedio_kgco2e), celda(f.mediana_kgco2e)); cuerpo.append(tr); }
-  msg(filas.length ? "Datos agregados (celdas con 10 o más respuestas)." : "Sin celdas publicables todavía (mínimo 10 respuestas).");
+let ultimasFilas = [];
+const tablaContenedor = document.getElementById("tabla-dashboard");
+const btnCsv = document.getElementById("btn-exportar-csv");
+
+async function cargarDashboard() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "./login.html";
+    return;
+  }
+
+  const { data: period } = await supabase.from("survey_periods").select("*").eq("is_open", true).limit(1).maybeSingle();
+  if (!period) {
+    tablaContenedor.textContent = "No hay periodos activos para consultar.";
+    return;
+  }
+
+  const { data, error } = await supabase.rpc("get_aggregated_metrics", {
+    p_period_id: period.id,
+    p_campus: null,
+    p_tipo_usuario: null,
+    p_min_cell: APP_CONFIG.MIN_CELL_PRIVACY
+  });
+
+  if (error) {
+    tablaContenedor.textContent = `Acceso restringido o error: ${error.message}`;
+    return;
+  }
+
+  ultimasFilas = data || [];
+  if (ultimasFilas.length === 0) {
+    tablaContenedor.textContent = "Aun no hay encuestas enviadas en este periodo.";
+    return;
+  }
+
+  const filasHtml = ultimasFilas.map((r) => `
+    <tr>
+      <td>${r.tipo_usuario}</td>
+      <td>${r.campus}</td>
+      <td>${r.participantes}</td>
+      <td>${r.oculto_por_privacidad ? '<span class="oculto-privacidad">Oculto (&lt;10 respuestas)</span>' : `${r.promedio_kgco2e} kg CO2e`}</td>
+      <td>${r.oculto_por_privacidad ? '<span class="oculto-privacidad">Oculto (&lt;10 respuestas)</span>' : `${r.mediana_kgco2e} kg CO2e`}</td>
+    </tr>
+  `).join("");
+
+  tablaContenedor.innerHTML = `
+    <p><strong>Periodo:</strong> ${period.name} | <strong>Denominador institucional:</strong> ${period.expected_population ?? "No cargado (no se calcula tasa de respuesta)"}</p>
+    <table class="tabla-datos">
+      <thead><tr><th>Grupo</th><th>Campus</th><th>Participantes (n)</th><th>Promedio</th><th>Mediana</th></tr></thead>
+      <tbody>${filasHtml}</tbody>
+    </table>
+  `;
 }
-const user = await requireUser();
-if (user) {
-  const { data } = await supabase.from("survey_periods").select("id, name").order("id", { ascending: false });
-  for (const p of data || []) { const o = document.createElement("option"); o.value = p.id; o.textContent = p.name; $("#periodo").append(o); }
-  $("#consultar").addEventListener("click", consultar);
-  $("#csv").addEventListener("click", () => filas.length ? descargarCsv(filas) : msg("No hay datos para exportar.", true));
-}
+
+btnCsv?.addEventListener("click", () => {
+  const csv = generarCsvAgregado(ultimasFilas);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "huellaviva_uan_agregado.csv";
+  a.click();
+});
+
+cargarDashboard();

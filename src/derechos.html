@@ -1,38 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mis derechos sobre mis datos - HuellaViva UAN</title>
-  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+<html lang="es-CO">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Mis Derechos â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/formularios.css"></head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header>
-    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
-    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
-  </header>
-  <nav aria-label="Principal">
-    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
-    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
-    <button id="salir" type="button">Salir</button>
-  </nav>
-  <main id="contenido">
-    <h1>Mis derechos sobre mis datos</h1>
-    <p id="msg" role="status" aria-live="polite"></p>
+  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
+  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <main class="contenedor">
     <section class="tarjeta">
-      <label for="tipo">Tipo de solicitud</label>
-      <select id="tipo"><option value="correccion">Corrección</option><option value="retiro">Retiro del consentimiento</option><option value="supresion">Supresión</option></select>
-      <label for="detalle">Detalle (máx. 1000 caracteres; no incluyas datos sensibles)</label><textarea id="detalle" rows="4" maxlength="1000"></textarea>
-      <button id="enviar" type="button">Registrar solicitud</button>
-      <p>Canal institucional y responsable: [POR COMPLETAR CON LA INSTANCIA INSTITUCIONAL].</p>
+      <h1>Derechos del Titular (Ley 1581 de 2012)</h1>
+      <p>Canal institucional: [POR COMPLETAR CON LA INSTANCIA INSTITUCIONAL]</p>
+      <form id="form-derechos">
+        <div class="campo"><label for="tipo_solicitud">Tipo de solicitud</label><select id="tipo_solicitud"><option value="correccion">Correccion</option><option value="retiro_consentimiento">Retiro de consentimiento</option><option value="supresion">Supresion de datos</option><option value="consulta">Consulta</option></select></div>
+        <div class="campo"><label for="desc_solicitud">Detalle</label><textarea id="desc_solicitud" rows="3" required></textarea></div>
+        <button type="submit" class="btn-primario">Registrar solicitud</button>
+      </form>
+      <div id="lista-solicitudes"></div>
     </section>
-    <div class="tabla"><table><caption>Mis solicitudes</caption><thead><tr><th>Fecha</th><th>Tipo</th><th>Estado</th></tr></thead><tbody id="filas"></tbody></table></div>
-      <section class="tarjeta"><h2>Retiro del consentimiento</h2><button id="retirar" type="button">Retirar mi consentimiento</button></section>
   </main>
-  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
-  <script type="module" src="js/derechos.js"></script>
-  <script type="module" src="js/retirarConsentimiento.js"></script>
+  <script type="module" src="./js/derechos.js"></script>
 </body>
 </html>

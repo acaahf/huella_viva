@@ -1,34 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Consentimiento informado - HuellaViva UAN</title>
-  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
+<html lang="es-CO">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Consentimiento â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/formularios.css"></head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
-  <header>
-    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
-    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
-  </header>
-  <nav aria-label="Principal">
-    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
-    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
-    <button id="salir" type="button">Salir</button>
-  </nav>
-  <main id="contenido">
-    <h1>Consentimiento informado</h1>
-    <p id="msg" role="status" aria-live="polite"></p>
+  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
+  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <main class="contenedor">
     <section class="tarjeta">
-      <p>Versión del aviso: <strong id="version">-</strong></p>
-      <p id="texto"></p>
-      <label><input id="chk" type="checkbox">He leído el aviso y acepto el tratamiento de mis respuestas.</label>
-      <button id="aceptar" type="button">Aceptar y continuar</button>
+      <h1>Aviso de Privacidad y Consentimiento (Ley 1581 de 2012)</h1>
+      <div id="texto-aviso" class="tarjeta">Cargando version vigente del aviso...</div>
+      <form id="form-consentimiento">
+        <label><input id="chk-acepto" type="checkbox" required> He leido y acepto voluntariamente el tratamiento de mis datos para esta estimacion academica.</label>
+        <div class="campo"><button type="submit" class="btn-primario">Aceptar y continuar a la encuesta</button></div>
+      </form>
+      <div id="estado-consentimiento" aria-live="polite"></div>
     </section>
   </main>
-  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
-  <script type="module" src="js/consentimiento.js"></script>
+  <script type="module" src="./js/consentimiento.js"></script>
 </body>
 </html>
