@@ -1,0 +1,15 @@
+# Secretos y datos reales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.dump
+*.bak
+backup*.sql
+dump*.sql
+# Sistema y dependencias
+node_modules/
+.DS_Store
+Thumbs.db
+supabase/.temp/

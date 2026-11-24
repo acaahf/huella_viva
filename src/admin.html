@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard agregado - HuellaViva UAN</title>
+  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header>
+    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
+    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
+  </header>
+  <nav aria-label="Principal">
+    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
+    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
+    <button id="salir" type="button">Salir</button>
+  </nav>
+  <main id="contenido">
+    <h1>Dashboard agregado</h1>
+    <p id="msg" role="status" aria-live="polite"></p>
+    <section class="tarjeta">
+      <label for="periodo">Periodo</label><select id="periodo"></select>
+      <label for="grupo">Grupo poblacional</label>
+      <select id="grupo"><option value="">Todos</option><option value="estudiante">Estudiantes</option><option value="profesor">Profesores</option><option value="administrativo">Administrativos</option></select>
+      <p><button id="consultar" type="button">Consultar</button><button id="csv" type="button">Descargar CSV agregado</button></p>
+      <p id="muestra"></p>
+    </section>
+    <div class="tabla"><table><caption>Emisiones por grupo y categoría (kg CO2e por persona)</caption>
+      <thead><tr><th>Grupo</th><th>Categoría</th><th>Participantes</th><th>Promedio</th><th>Mediana</th></tr></thead><tbody id="filas"></tbody></table></div>
+      <p id="version"></p>
+    <div class="tabla"><table><caption>Distribución del total por persona (kg CO2e)</caption><thead><tr><th>Rango</th><th>Participantes</th><th>Proporción</th></tr></thead><tbody id="dist"></tbody></table></div>
+    <p><a href="factores.html">Factores</a> · <a href="periodos.html">Periodos</a> · <a href="solicitudes.html">Solicitudes</a></p>
+  </main>
+  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
+  <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/distribucion.js"></script>
+</body>
+</html>

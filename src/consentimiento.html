@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consentimiento informado - HuellaViva UAN</title>
+  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header>
+    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
+    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
+  </header>
+  <nav aria-label="Principal">
+    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
+    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
+    <button id="salir" type="button">Salir</button>
+  </nav>
+  <main id="contenido">
+    <h1>Consentimiento informado</h1>
+    <p id="msg" role="status" aria-live="polite"></p>
+    <section class="tarjeta">
+      <p>Versión del aviso: <strong id="version">-</strong></p>
+      <p id="texto"></p>
+      <label><input id="chk" type="checkbox">He leído el aviso y acepto el tratamiento de mis respuestas.</label>
+      <button id="aceptar" type="button">Aceptar y continuar</button>
+    </section>
+  </main>
+  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
+  <script type="module" src="js/consentimiento.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Referencias (registrar fecha de consulta; todas deben revisarse antes de un piloto)
+- Ley 1931 de 2018: https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=87765
+- Resolución 1447 de 2018 (MRV): https://www.minambiente.gov.co/documento-normativa/resolucion-1447-de-2018/
+- RENARE: https://www.minambiente.gov.co/cambio-climatico-y-gestion-del-riesgo/renare/
+- Ley Estatutaria 1581 de 2012 (SIC): https://sedeelectronica.sic.gov.co/transparencia/normativa/ley-estatutaria-1581-de-2012
+- Política de tratamiento de datos (SIC): https://sedeelectronica.sic.gov.co/politica-de-tratamiento-de-datos-personales
+- Factor de emisión del SIN (UPME): https://www.upme.gov.co/simec/oferta-y-demanda/transicion-energetica-justa/cambioclimatico/calculo-del-factor-de-emision-de-co2-del-sin/
+- Soporte del factor SIN 2024 (usado en seed.sql): https://docs.upme.gov.co/Normatividad/Soporte_calculo_Factor_de_Emision_2024.pdf (consultado 2026-11-23)
+- FECOC+ y transporte sostenible (UPME): https://www.upme.gov.co/siee/transporte-sostenible/
+- GHG Protocol Corporate Standard: https://ghgprotocol.org/corporate-standard
+- ISO 14064-1 / ICONTEC: https://www.icontec.org/eval-conformidad/verificacion-de-carbono-neutro-guia-de-neutralidad-icontec/

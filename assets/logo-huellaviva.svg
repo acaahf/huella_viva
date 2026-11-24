@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="t">
+  <title id="t">HuellaViva UAN</title>
+  <ellipse cx="50" cy="66" rx="22" ry="27" fill="#1f7a4d"/>
+  <ellipse cx="50" cy="66" rx="16" ry="21" fill="none" stroke="#0b3d91" stroke-width="2"/>
+  <ellipse cx="50" cy="66" rx="10" ry="15" fill="none" stroke="#0b3d91" stroke-width="2"/>
+  <ellipse cx="50" cy="66" rx="4" ry="9" fill="none" stroke="#0b3d91" stroke-width="2"/>
+  <circle cx="30" cy="30" r="6" fill="#0b3d91"/><circle cx="43" cy="22" r="6.5" fill="#1f7a4d"/>
+  <circle cx="58" cy="22" r="6.5" fill="#0b3d91"/><circle cx="71" cy="30" r="6" fill="#1f7a4d"/>
+</svg>

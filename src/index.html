@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso de participante - HuellaViva UAN</title>
+  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header>
+    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
+    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
+  </header>
+  <nav aria-label="Principal">
+    <a href="index.html">Inicio</a> <a href="consentimiento.html">Consentimiento</a> <a href="encuesta.html">Encuesta</a>
+    <a href="informe.html">Informe</a> <a href="derechos.html">Mis derechos</a> <a href="admin.html">Administración</a>
+    <button id="salir" type="button">Salir</button>
+  </nav>
+  <main id="contenido">
+    <h1>Acceso de participante</h1>
+    <p id="msg" role="status" aria-live="polite"></p>
+    <section class="tarjeta">
+      <label for="email">Correo</label><input id="email" type="email" autocomplete="email">
+      <label for="password">Contraseña (mínimo 6 caracteres)</label><input id="password" type="password" autocomplete="current-password">
+      <label for="tipo">Grupo (solo para registrarte)</label>
+      <select id="tipo"><option value="estudiante">Estudiante</option><option value="profesor">Profesor</option><option value="administrativo">Administrativo</option></select>
+      <p><button id="ingreso" type="button">Ingresar</button><button id="registro" type="button">Registrarme</button></p>
+    </section>
+    <p>Usa solo datos de prueba. Tus respuestas individuales no se muestran a otras personas.</p>
+  </main>
+  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>

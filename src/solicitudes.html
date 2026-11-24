@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitudes de derechos de los titulares - HuellaViva UAN</title>
+  <link rel="icon" href="../assets/logo-huellaviva.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header>
+    <img src="../assets/logo-huellaviva.svg" alt="Logo HuellaViva UAN" width="44" height="44">
+    <p><strong>HuellaViva UAN</strong> · prototipo académico: no es un inventario verificado, ni certificación, ni compensación, ni resultado oficial de RENARE.</p>
+  </header>
+  <nav aria-label="Principal">
+    <a href="index.html">Inicio</a> <a href="admin.html">Dashboard</a> <a href="factores.html">Factores</a>
+    <a href="periodos.html">Periodos</a> <a href="solicitudes.html">Solicitudes</a>
+    <button id="salir" type="button">Salir</button>
+  </nav>
+  <main id="contenido">
+    <h1>Solicitudes de derechos de los titulares</h1>
+    <p id="msg" role="status" aria-live="polite"></p>
+    <p>Vista sin identidad. La respuesta al titular se gestiona por el canal institucional [POR COMPLETAR].</p>
+    <div class="tabla"><table><caption>Solicitudes</caption>
+      <thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Estado</th></tr></thead><tbody id="filas"></tbody></table></div>
+  </main>
+  <footer><p>Estimador educativo. Cifras aproximadas; ver fuentes y limitaciones en el informe.</p></footer>
+  <script type="module" src="js/adminSolicitudes.js"></script>
+</body>
+</html>
