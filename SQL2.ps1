@@ -1,25 +1,53 @@
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-# 1. Convertir index.html (tanto en raiz como en src/) en una redireccion directa a login.html
-$redirectHtml = @'
-<!DOCTYPE html>
-<html lang="es-CO">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=./src/login.html">
-  <title>HuellaViva UAN</title>
-  <script>
-    window.location.replace("./src/login.html");
-  </script>
-</head>
-<body></body>
-</html>
-'@
-
-if (Test-Path "index.html") {
-    [System.IO.File]::WriteAllText((Join-Path (Get-Location) "index.html"), $redirectHtml, $utf8NoBom)
+# 1. Quitar el visibility: hidden de admin.html, factores.html y periodos.html para que nunca queden en blanco
+foreach ($page in @("admin.html", "factores.html", "periodos.html")) {
+    $p = Join-Path (Get-Location) "src\$page"
+    if (Test-Path $p) {
+        $h = [System.IO.File]::ReadAllText($p, $utf8NoBom)
+        $h = $h -replace '<style id="admin-guard-style">.*?</style>', ''
+        [System.IO.File]::WriteAllText($p, $h, $utf8NoBom)
+    }
 }
 
+# 2. Asegurar que navGuard.js inyecte el boton Admin en TODAS las paginas (excepto login) cuando el correo sea acaamano287@uan.edu.co
+$navGuardJs = @'
+import { supabase } from "./supabaseClient.js";
+
+const ADMIN_EMAIL = "acaamano287@uan.edu.co";
+
+async function controlarAccesoAdmin() {
+  const ruta = window.location.pathname.toLowerCase();
+  const esPaginaAdmin = ruta.endsWith("admin.html") || ruta.endsWith("factores.html") || ruta.endsWith("periodos.html");
+  const esLogin = ruta.endsWith("login.html");
+
+  const { data: { user } } = await supabase.auth.getUser();
+  const esAdmin = Boolean(user && (user.email || "").toLowerCase() === ADMIN_EMAIL);
+
+  if (!esAdmin) {
+    if (esPaginaAdmin) {
+      window.location.replace(user ? "./encuesta.html" : "./login.html");
+    }
+    return;
+  }
+
+  if (!esLogin) {
+    const nav = document.querySelector(".cabecera-principal nav");
+    if (nav && !nav.querySelector('a[href$="admin.html"]')) {
+      const linkAdmin = document.createElement("a");
+      linkAdmin.className = "btn-nav";
+      linkAdmin.href = "./admin.html";
+      linkAdmin.textContent = "Admin";
+      nav.appendChild(linkAdmin);
+    }
+  }
+}
+
+controlarAccesoAdmin();
+'@
+[System.IO.File]::WriteAllText((Join-Path (Get-Location) "src\js\navGuard.js"), $navGuardJs, $utf8NoBom)
+
+# 3. Corregir redireccion en index.html (raiz y src/) para que funcione en GitHub Pages
 $srcIndexHtml = @'
 <!DOCTYPE html>
 <html lang="es-CO">
@@ -34,28 +62,10 @@ $srcIndexHtml = @'
 <body></body>
 </html>
 '@
-
 if (Test-Path "src\index.html") {
     [System.IO.File]::WriteAllText((Join-Path (Get-Location) "src\index.html"), $srcIndexHtml, $utf8NoBom)
 }
 
-# 2. Quitar los botones del menu superior (Encuesta, Mi Informe, Derechos, Admin) de login.html
-$loginPath = Join-Path (Get-Location) "src\login.html"
-if (Test-Path $loginPath) {
-    $loginHtml = [System.IO.File]::ReadAllText($loginPath, $utf8NoBom)
-    $loginHtml = $loginHtml -replace '(?s)<nav[^>]*>.*?</nav>', ''
-    $loginHtml = $loginHtml -replace 'href="\./index\.html"', 'href="./login.html"'
-    [System.IO.File]::WriteAllText($loginPath, $loginHtml, $utf8NoBom)
-}
-
-# 3. Asegurar que los enlaces de la marca en las demas paginas apunten a encuesta.html en lugar de index.html
-Get-ChildItem -Path src -Filter *.html -File | Where-Object { $_.Name -ne "index.html" -and $_.Name -ne "login.html" } | ForEach-Object {
-    $h = [System.IO.File]::ReadAllText($_.FullName, $utf8NoBom)
-    $h = $h -replace 'href="\./index\.html"', 'href="./encuesta.html"'
-    [System.IO.File]::WriteAllText($_.FullName, $h, $utf8NoBom)
-}
-
-# 4. Subir cambios a GitHub
 git add .
-git commit -m "Elimina pantalla inicial intermedia y redirige directo a login"
+git commit -m "Restaura visibilidad de admin.html y enlace dinamico exclusivo para acaamano287@uan.edu.co"
 git push
