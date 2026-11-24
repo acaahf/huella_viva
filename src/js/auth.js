@@ -2,7 +2,23 @@ import { supabase } from "./supabaseClient.js";
 import { mostrarMensaje } from "./ui.js";
 
 const form = document.getElementById("form-login");
+const btnLogin = document.getElementById("btn-login");
+const btnRegister = document.getElementById("btn-register");
 const estado = document.getElementById("estado-auth");
+
+async function completarAcceso(user, tipoUsuario) {
+  await supabase.from("profiles").upsert({ id: user.id, tipo_usuario: tipoUsuario }, { onConflict: "id" });
+
+  const { data: consent } = await supabase
+    .from("consents")
+    .select("id")
+    .eq("user_id", user.id)
+    .is("revoked_at", null)
+    .limit(1)
+    .maybeSingle();
+
+  window.location.href = consent ? "./encuesta.html" : "./consentimiento.html";
+}
 
 form?.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -10,37 +26,51 @@ form?.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
   const tipoUsuario = document.getElementById("tipo_usuario").value;
 
-  let { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error && error.message.toLowerCase().includes("invalid login credentials")) {
-    const signUpRes = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { tipo_usuario: tipoUsuario } }
-    });
-
-    if (signUpRes.error) {
-      const msg = signUpRes.error.message.toLowerCase().includes("already registered")
-        ? "ContraseÃ±a incorrecta para este correo."
-        : `Error al registrar: ${signUpRes.error.message}`;
-      mostrarMensaje(estado, msg, "error");
-      return;
-    }
-
-    if (!signUpRes.data.session) {
-      mostrarMensaje(estado, "Cuenta creada. Revisa tu correo para confirmarla (o desactiva 'Confirm email' en Supabase).", "info");
-      return;
-    }
-
-    data = signUpRes.data;
-    error = null;
-  }
+  btnLogin.disabled = true;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  btnLogin.disabled = false;
 
   if (error) {
-    mostrarMensaje(estado, `Error de acceso: ${error.message}`, "error");
+    const msg = error.message.toLowerCase().includes("invalid login credentials")
+      ? "Correo o contraseÃ±a incorrectos. Si aÃºn no tienes cuenta, pulsa 'Registrarse'."
+      : `Error al iniciar sesiÃ³n: ${error.message}`;
+    mostrarMensaje(estado, msg, "error");
     return;
   }
 
-  await supabase.from("profiles").upsert({ id: data.user.id, tipo_usuario: tipoUsuario });
-  window.location.href = "./consentimiento.html";
+  await completarAcceso(data.user, tipoUsuario);
+});
+
+btnRegister?.addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const tipoUsuario = document.getElementById("tipo_usuario").value;
+
+  if (!email || password.length < 6) {
+    mostrarMensaje(estado, "Ingresa un correo vÃ¡lido y una contraseÃ±a de al menos 6 caracteres para registrarte.", "error");
+    return;
+  }
+
+  btnRegister.disabled = true;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { tipo_usuario: tipoUsuario } }
+  });
+  btnRegister.disabled = false;
+
+  if (error) {
+    const msg = error.message.toLowerCase().includes("already registered")
+      ? "Este correo ya estÃ¡ registrado. Pulsa 'Iniciar sesiÃ³n'."
+      : `Error al registrarse: ${error.message}`;
+    mostrarMensaje(estado, msg, "error");
+    return;
+  }
+
+  if (!data.session) {
+    mostrarMensaje(estado, "Cuenta creada. Revisa tu correo para confirmarla antes de iniciar sesiÃ³n.", "exito");
+    return;
+  }
+
+  await completarAcceso(data.user, tipoUsuario);
 });

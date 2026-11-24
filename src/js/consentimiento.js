@@ -15,8 +15,15 @@ async function cargarAviso() {
 form?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !versionActiva) return mostrarMensaje(estado, "Inicie sesion primero.", "error");
-  const { error } = await supabase.from("consents").upsert({ user_id: user.id, consent_version_id: versionActiva.id });
+  if (!user || !versionActiva) return mostrarMensaje(estado, "Inicie sesiÃ³n primero.", "error");
+
+  const { error } = await supabase
+    .from("consents")
+    .upsert(
+      { user_id: user.id, consent_version_id: versionActiva.id, revoked_at: null },
+      { onConflict: "user_id,consent_version_id" }
+    );
+
   if (error) return mostrarMensaje(estado, error.message, "error");
   window.location.href = "./encuesta.html";
 });

@@ -1,21 +1,59 @@
 <!DOCTYPE html>
 <html lang="es-CO">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Ingreso â€” HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/formularios.css"></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingreso â€” HuellaViva UAN</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/formularios.css">
+</head>
 <body>
-  <aside class="banner-institucional" role="note"><strong>Prototipo Academico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
-  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <aside class="banner-institucional" role="note">
+    <strong>Prototipo AcadÃ©mico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnÃ³stico institucional. NO es un inventario verificado, certificaciÃ³n ambiental ni resultado oficial de RENARE.
+  </aside>
+  <header class="cabecera-principal">
+    <a class="marca" href="./index.html">
+      <img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN">
+      <span>HuellaViva UAN</span>
+    </a>
+    <nav aria-label="Principal">
+      <a class="btn-nav" href="./encuesta.html">Encuesta</a>
+      <a class="btn-nav" href="./informe.html">Mi Informe</a>
+      <a class="btn-nav" href="./derechos.html">Derechos</a>
+      <a class="btn-nav" href="./admin.html">Admin</a>
+    </nav>
+  </header>
+
   <main class="contenedor">
     <section class="tarjeta">
       <h1>Acceso de participantes</h1>
       <form id="form-login">
-        <div class="campo"><label for="email">Correo institucional</label><input id="email" type="email" required></div>
-        <div class="campo"><label for="password">Contrasena</label><input id="password" type="password" required minlength="6"></div>
-        <div class="campo"><label for="tipo_usuario">Grupo poblacional</label><select id="tipo_usuario"><option value="estudiante">Estudiante</option><option value="profesor">Profesor</option><option value="administrativo">Administrativo</option></select></div>
-        <button type="submit" class="btn-primario">Ingresar / Registrar</button>
+        <div class="campo">
+          <label for="email">Correo institucional</label>
+          <input id="email" type="email" required placeholder="usuario@uan.edu.co">
+        </div>
+        <div class="campo">
+          <label for="password">ContraseÃ±a</label>
+          <input id="password" type="password" required minlength="6">
+        </div>
+        <div class="campo">
+          <label for="tipo_usuario">Grupo poblacional</label>
+          <select id="tipo_usuario">
+            <option value="estudiante">Estudiante</option>
+            <option value="profesor">Profesor</option>
+            <option value="administrativo">Administrativo</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-top:1rem;">
+          <button type="submit" id="btn-login" class="btn-primario">Iniciar sesiÃ³n</button>
+          <button type="button" id="btn-register" class="btn-secundario">Registrarse</button>
+        </div>
       </form>
-      <div id="estado-auth" aria-live="polite"></div>
+      <div id="estado-auth" aria-live="polite" style="margin-top:1rem;"></div>
     </section>
   </main>
+
   <script type="module" src="./js/auth.js"></script>
 </body>
 </html>
