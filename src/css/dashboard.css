@@ -1,6 +1,221 @@
-.grid-metricas { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-@media (min-width: 768px) { .grid-metricas { grid-template-columns: repeat(3, 1fr); } }
-.tabla-datos { width: 100%; border-collapse: collapse; margin-top: 1rem; background: var(--color-superficie); }
-.tabla-datos th, .tabla-datos td { border: 1px solid var(--color-borde); padding: 0.75rem; text-align: left; }
-.tabla-datos th { background: var(--color-uan-azul); color: #fff; }
-.oculto-privacidad { color: var(--color-texto-sec); font-style: italic; }
+.admin-wrapper {
+  max-width: 1120px;
+  margin: 1.5rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-header-bar {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-header-bar h1 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.55rem;
+  color: #111827;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+/* Tarjetas KPI */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.kpi-card.highlight {
+  background: linear-gradient(120deg, #166534 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+}
+
+.kpi-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+  margin-bottom: 0.45rem;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.kpi-sub {
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
+  opacity: 0.85;
+}
+
+/* Grid de graficos */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.15rem;
+}
+
+@media (min-width: 860px) {
+  .charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.panel-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.panel-card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 155px 1fr 85px;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.9rem;
+}
+
+.chart-label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.chart-track {
+  width: 100%;
+  height: 14px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.chart-fill-blue {
+  height: 100%;
+  background: #1d4ed8;
+  border-radius: 999px;
+  min-width: 6px;
+}
+
+.chart-fill-green {
+  height: 100%;
+  background: #15803d;
+  border-radius: 999px;
+  min-width: 6px;
+}
+
+.chart-val {
+  text-align: right;
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 0.86rem;
+}
+
+/* Filtros y tabla de participantes */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.filter-input, .filter-select {
+  padding: 0.55rem 0.85rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.tabla-datos th {
+  background: #1e3a8a;
+  color: #ffffff;
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  font-weight: 700;
+}
+
+.tabla-datos td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 0.85rem;
+  color: #1f2937;
+}
+
+.tabla-datos tr:hover td {
+  background: #f9fafb;
+}
+
+.badge-role {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  background: #e0e7ff;
+  color: #1e40af;
+}
+
+.badge-status-ok {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-status-draft {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #fef3c7;
+  color: #92400e;
+}

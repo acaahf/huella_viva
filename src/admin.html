@@ -1,19 +1,50 @@
 <!DOCTYPE html>
 <html lang="es-CO">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dashboard Admin — HuellaViva UAN</title><link rel="stylesheet" href="./css/base.css"><link rel="stylesheet" href="./css/componentes.css"><link rel="stylesheet" href="./css/dashboard.css"></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo â€” HuellaViva UAN</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+</head>
 <body>
-  <aside class="banner-institucional" role="note"><strong>Prototipo Academico — HuellaViva UAN:</strong> Estimador educativo y de diagnostico institucional. NO es un inventario verificado, certificacion ambiental ni resultado oficial de RENARE.</aside>
-  <header class="cabecera-principal"><a class="marca" href="./index.html"><img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN"><span>HuellaViva UAN</span></a><nav aria-label="Principal"><a class="btn-nav" href="./encuesta.html">Encuesta</a><a class="btn-nav" href="./informe.html">Mi Informe</a><a class="btn-nav" href="./derechos.html">Derechos</a><a class="btn-nav" href="./admin.html">Admin</a></nav></header>
+  <aside class="banner-institucional" role="note">
+    <strong>Prototipo AcadÃ©mico â€” HuellaViva UAN:</strong> Estimador educativo y de diagnÃ³stico institucional. NO es un inventario verificado, certificaciÃ³n ambiental ni resultado oficial de RENARE.
+  </aside>
+  <header class="cabecera-principal">
+    <a class="marca" href="./index.html">
+      <img src="../assets/logo-huellaviva.svg" alt="Icono HuellaViva UAN">
+      <span>HuellaViva UAN</span>
+    </a>
+    <nav aria-label="Principal">
+      <a class="btn-nav" href="./encuesta.html">Encuesta</a>
+      <a class="btn-nav" href="./informe.html">Mi Informe</a>
+      <a class="btn-nav" href="./derechos.html">Derechos</a>
+      <a class="btn-nav" href="./admin.html">Admin</a>
+    </nav>
+  </header>
+
   <main class="contenedor">
-    <section class="tarjeta">
-      <h1>Dashboard Agregado (Regla de privacidad k &ge; 10)</h1>
-      <p>Los grupos con menos de 10 respuestas se ocultan automaticamente. No se exponen registros individuales.</p>
-      <a class="btn-secundario" href="./factores.html">Gestionar Factores</a>
-      <a class="btn-secundario" href="./periodos.html">Gestionar Periodos</a>
-      <button id="btn-exportar-csv" class="btn-primario" type="button">Exportar CSV Seguro</button>
-      <div id="tabla-dashboard">Cargando agregados...</div>
-    </section>
+    <div class="admin-wrapper">
+      <section class="admin-header-bar">
+        <div>
+          <h1>Panel Administrativo â€” HuellaViva UAN</h1>
+          <p id="admin-periodo-info" style="margin:0; color:#4b5563;">Verificando periodo activo y permisos...</p>
+        </div>
+        <div class="admin-actions">
+          <a class="btn-secundario" href="./factores.html">Gestionar Factores</a>
+          <a class="btn-secundario" href="./periodos.html">Gestionar Periodos</a>
+          <button id="btn-exportar-csv" class="btn-primario" type="button">Exportar CSV</button>
+        </div>
+      </section>
+
+      <div id="admin-contenido" aria-live="polite">
+        <div class="panel-card"><p>Cargando indicadores y encuestas registradas...</p></div>
+      </div>
+    </div>
   </main>
+
   <script type="module" src="./js/dashboard.js"></script>
 </body>
 </html>
