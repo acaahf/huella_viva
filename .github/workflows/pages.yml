@@ -18,10 +18,10 @@ jobs:
         run: |
           mkdir -p dist
           cp -r src/* dist/
-          cp -r assets dist/assets
+          cp -r assets dist/assets 2>/dev/null || true
           sed -i 's|\.\./assets/|./assets/|g' dist/*.html
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: './dist'
       - id: deployment
