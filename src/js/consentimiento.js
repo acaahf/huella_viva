@@ -15,7 +15,7 @@ async function cargarAviso() {
 form?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !versionActiva) return mostrarMensaje(estado, "Inicie sesiÃ³n primero.", "error");
+  if (!user || !versionActiva) return mostrarMensaje(estado, "Inicie sesión primero.", "error");
 
   const { error } = await supabase
     .from("consents")

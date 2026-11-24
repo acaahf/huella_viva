@@ -32,8 +32,8 @@ form?.addEventListener("submit", async (e) => {
 
   if (error) {
     const msg = error.message.toLowerCase().includes("invalid login credentials")
-      ? "Correo o contraseÃ±a incorrectos. Si aÃºn no tienes cuenta, pulsa 'Registrarse'."
-      : `Error al iniciar sesiÃ³n: ${error.message}`;
+      ? "Correo o contraseña incorrectos. Si aún no tienes cuenta, pulsa 'Registrarse'."
+      : `Error al iniciar sesión: ${error.message}`;
     mostrarMensaje(estado, msg, "error");
     return;
   }
@@ -47,7 +47,7 @@ btnRegister?.addEventListener("click", async () => {
   const tipoUsuario = document.getElementById("tipo_usuario").value;
 
   if (!email || password.length < 6) {
-    mostrarMensaje(estado, "Ingresa un correo vÃ¡lido y una contraseÃ±a de al menos 6 caracteres para registrarte.", "error");
+    mostrarMensaje(estado, "Ingresa un correo válido y una contraseña de al menos 6 caracteres para registrarte.", "error");
     return;
   }
 
@@ -61,14 +61,14 @@ btnRegister?.addEventListener("click", async () => {
 
   if (error) {
     const msg = error.message.toLowerCase().includes("already registered")
-      ? "Este correo ya estÃ¡ registrado. Pulsa 'Iniciar sesiÃ³n'."
+      ? "Este correo ya está registrado. Pulsa 'Iniciar sesión'."
       : `Error al registrarse: ${error.message}`;
     mostrarMensaje(estado, msg, "error");
     return;
   }
 
   if (!data.session) {
-    mostrarMensaje(estado, "Cuenta creada. Revisa tu correo para confirmarla antes de iniciar sesiÃ³n.", "exito");
+    mostrarMensaje(estado, "Cuenta creada. Revisa tu correo para confirmarla antes de iniciar sesión.", "exito");
     return;
   }
 

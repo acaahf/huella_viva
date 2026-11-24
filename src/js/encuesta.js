@@ -17,18 +17,18 @@ let pasoActual = 1;
 const TOTAL_PASOS = 11;
 
 const ELECTRODOMESTICOS = [
-  { id: "nevera", nombre: "Nevera", emoji: "ðŸ§Š", sub: "Siempre encendida", fijo: true, kwhMesBase: 36, tipoUso: "fijo" },
-  { id: "aire", nombre: "Aire acondicionado", emoji: "â„ï¸", kwhHora: 1.2, tipoUso: "dia" },
-  { id: "ventilador", nombre: "Ventilador", emoji: "ðŸŒ€", kwhHora: 0.065, tipoUso: "dia" },
-  { id: "tv", nombre: "Televisor", emoji: "ðŸ“º", kwhHora: 0.1, tipoUso: "dia" },
-  { id: "bombillos", nombre: "Bombillos", emoji: "ðŸ’¡", kwhHora: 0.05, tipoUso: "dia" },
-  { id: "portatil", nombre: "PortÃ¡til", emoji: "ðŸ’»", kwhHora: 0.05, tipoUso: "dia" },
-  { id: "pc", nombre: "PC de escritorio", emoji: "ðŸ–¥ï¸", kwhHora: 0.18, tipoUso: "dia" },
-  { id: "microondas", nombre: "Microondas", emoji: "ðŸ¿", kwhHora: 1.1, tipoUso: "semana" },
-  { id: "lavadora", nombre: "Lavadora", emoji: "ðŸ«§", kwhHora: 0.5, tipoUso: "semana" },
-  { id: "plancha", nombre: "Plancha", emoji: "ðŸ‘•", kwhHora: 1.0, tipoUso: "semana" },
-  { id: "horno", nombre: "Horno elÃ©ctrico", emoji: "ðŸ•", kwhHora: 1.5, tipoUso: "semana" },
-  { id: "secador", nombre: "Secador de pelo", emoji: "ðŸ’‡", kwhHora: 1.4, tipoUso: "semana" }
+  { id: "nevera", nombre: "Nevera", emoji: "🧊", sub: "Siempre encendida", fijo: true, kwhMesBase: 36, tipoUso: "fijo" },
+  { id: "aire", nombre: "Aire acondicionado", emoji: "❄️", kwhHora: 1.2, tipoUso: "dia" },
+  { id: "ventilador", nombre: "Ventilador", emoji: "🌀", kwhHora: 0.065, tipoUso: "dia" },
+  { id: "tv", nombre: "Televisor", emoji: "📺", kwhHora: 0.1, tipoUso: "dia" },
+  { id: "bombillos", nombre: "Bombillos", emoji: "💡", kwhHora: 0.05, tipoUso: "dia" },
+  { id: "portatil", nombre: "Portátil", emoji: "💻", kwhHora: 0.05, tipoUso: "dia" },
+  { id: "pc", nombre: "PC de escritorio", emoji: "🖥️", kwhHora: 0.18, tipoUso: "dia" },
+  { id: "microondas", nombre: "Microondas", emoji: "🍿", kwhHora: 1.1, tipoUso: "semana" },
+  { id: "lavadora", nombre: "Lavadora", emoji: "🫧", kwhHora: 0.5, tipoUso: "semana" },
+  { id: "plancha", nombre: "Plancha", emoji: "👕", kwhHora: 1.0, tipoUso: "semana" },
+  { id: "horno", nombre: "Horno eléctrico", emoji: "🍕", kwhHora: 1.5, tipoUso: "semana" },
+  { id: "secador", nombre: "Secador de pelo", emoji: "💇", kwhHora: 1.4, tipoUso: "semana" }
 ];
 
 const OPCIONES_DIA = [
@@ -36,14 +36,14 @@ const OPCIONES_DIA = [
   { id: "1_3", label: "1 a 3 h", horas: 2 },
   { id: "3_6", label: "3 a 6 h", horas: 4.5 },
   { id: "6_10", label: "6 a 10 h", horas: 8 },
-  { id: "mas_10", label: "MÃ¡s de 10 h", horas: 12 }
+  { id: "mas_10", label: "Más de 10 h", horas: 12 }
 ];
 
 const OPCIONES_SEMANA = [
   { id: "1h", label: "1 h", horas: 1 },
   { id: "2_3h", label: "2 a 3 h", horas: 2.5 },
   { id: "4_6h", label: "4 a 6 h", horas: 5 },
-  { id: "mas_6h", label: "MÃ¡s de 6 h", horas: 8 }
+  { id: "mas_6h", label: "Más de 6 h", horas: 8 }
 ];
 
 const state = {
@@ -79,7 +79,7 @@ function calcularDesgloseMensual() {
   if (state.tieneRecibo) {
     kwhTotalHogarMes = Math.max(0, Number(state.kwhReciboMes) || 0);
     const kg = (kwhTotalHogarMes / personas) * FE_ELEC;
-    itemsDetalle.push({ nombre: "Electricidad (recibo)", emoji: "âš¡", kg, estimado: false });
+    itemsDetalle.push({ nombre: "Electricidad (recibo)", emoji: "⚡", kg, estimado: false });
   } else {
     for (const id of state.equiposSeleccionados) {
       const eq = ELECTRODOMESTICOS.find((e) => e.id === id);
@@ -113,14 +113,14 @@ function calcularDesgloseMensual() {
   const coc = cocinaMap[state.cocina] || cocinaMap.gas_natural;
   const cocinaKgMes = coc.kgHogar / personas;
   if (cocinaKgMes > 0) {
-    itemsDetalle.push({ nombre: "Cocina", emoji: "ðŸ³", kg: cocinaKgMes, estimado: true });
+    itemsDetalle.push({ nombre: "Cocina", emoji: "🍳", kg: cocinaKgMes, estimado: true });
   }
 
   // 3. Consumo y residuos (mensual)
   const dietaKgMes = state.dieta === "vegana" ? 18 : state.dieta === "poca_carne" ? 32 : 48;
   const residuosKgMes = state.reciclaje === "siempre" ? 4 : state.reciclaje === "aveces" ? 8 : 13;
-  itemsDetalle.push({ nombre: "AlimentaciÃ³n y consumo", emoji: "ðŸ¥—", kg: dietaKgMes, estimado: true });
-  itemsDetalle.push({ nombre: "Residuos del hogar", emoji: "â™»ï¸", kg: residuosKgMes, estimado: true });
+  itemsDetalle.push({ nombre: "Alimentación y consumo", emoji: "🥗", kg: dietaKgMes, estimado: true });
+  itemsDetalle.push({ nombre: "Residuos del hogar", emoji: "♻️", kg: residuosKgMes, estimado: true });
 
   // 4. Movilidad a la universidad (mensual)
   const distKmIdaMap = { menos_1: 0.7, "1_3": 2, "3_7": 5, "7_15": 11, mas_15: 20 };
@@ -138,12 +138,12 @@ function calcularDesgloseMensual() {
   };
   const tr = transpConfig[state.transporte] || transpConfig.bus;
   const movilidadKgMes = kmMes * tr.fe;
-  itemsDetalle.push({ nombre: "Ida y vuelta a la U", emoji: "ðŸšŒ", kg: movilidadKgMes, estimado: false });
+  itemsDetalle.push({ nombre: "Ida y vuelta a la U", emoji: "🚌", kg: movilidadKgMes, estimado: false });
 
   // 5. Vuelos (mensual)
   const vuelosKgMes = state.viajoAvion ? Math.max(1, Number(state.vuelosMes) || 1) * 115 : 0;
   if (vuelosKgMes > 0) {
-    itemsDetalle.push({ nombre: "Vuelos del mes", emoji: "âœˆï¸", kg: vuelosKgMes, estimado: true });
+    itemsDetalle.push({ nombre: "Vuelos del mes", emoji: "✈️", kg: vuelosKgMes, estimado: true });
   }
 
   const totalKgMes = energiaKgMes + cocinaKgMes + dietaKgMes + residuosKgMes + movilidadKgMes + vuelosKgMes;
@@ -166,23 +166,23 @@ function calcularDesgloseMensual() {
 function actualizarPillEnVivo() {
   const res = calcularDesgloseMensual();
   const formatted = res.totalKgMes.toFixed(1).replace(".", ",");
-  if (huellaVivoEl) huellaVivoEl.textContent = `${formatted} kg COâ‚‚e`;
+  if (huellaVivoEl) huellaVivoEl.textContent = `${formatted} kg CO₂e`;
 }
 
 function renderPaso() {
   actualizarPillEnVivo();
   progressBar.style.width = `${Math.round((pasoActual / TOTAL_PASOS) * 100)}%`;
   btnAtras.disabled = pasoActual === 1;
-  btnSiguiente.textContent = pasoActual === TOTAL_PASOS ? "Ver mi huella ðŸŒ±" : "Siguiente â†’";
+  btnSiguiente.textContent = pasoActual === TOTAL_PASOS ? "Ver mi huella 🌱" : "Siguiente →";
 
   // Si tiene recibo, saltar pasos 3 y 4 de electrodomesticos
   if (pasoActual === 1) {
-    stepLabel.textContent = "TU CASA Â· 1 DE 11";
+    stepLabel.textContent = "TU CASA · 1 DE 11";
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CuÃ¡ntas personas viven en tu casa?</h2>
-      <p class="wizard-subtitle">ContÃ¡ndote a ti. AsÃ­ repartimos el consumo de la casa entre todos.</p>
+      <h2 class="wizard-title">¿Cuántas personas viven en tu casa?</h2>
+      <p class="wizard-subtitle">Contándote a ti. Así repartimos el consumo de la casa entre todos.</p>
       <div class="stepper-box">
-        <button type="button" class="btn-circle" id="btn-menos">âˆ’</button>
+        <button type="button" class="btn-circle" id="btn-menos">−</button>
         <span class="stepper-val" id="val-personas">${state.personas}</span>
         <button type="button" class="btn-circle" id="btn-mas">+</button>
       </div>
@@ -196,17 +196,17 @@ function renderPaso() {
   }
 
   else if (pasoActual === 2) {
-    stepLabel.textContent = "ENERGÃA Â· 2 DE 11";
+    stepLabel.textContent = "ENERGÍA · 2 DE 11";
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿Tienes a mano el recibo de luz?</h2>
-      <p class="wizard-subtitle">Si no, no pasa nada: lo calculamos con tus electrodomÃ©sticos.</p>
+      <h2 class="wizard-title">¿Tienes a mano el recibo de luz?</h2>
+      <p class="wizard-subtitle">Si no, no pasa nada: lo calculamos con tus electrodomésticos.</p>
       <div class="cards-grid cards-grid-2">
         <div class="option-card ${state.tieneRecibo ? "selected" : ""}" data-recibo="true">
-          <span class="option-emoji">ðŸ§¾</span>
-          <span class="option-label">SÃ­, lo tengo</span>
+          <span class="option-emoji">🧾</span>
+          <span class="option-label">Sí, lo tengo</span>
         </div>
         <div class="option-card ${!state.tieneRecibo ? "selected" : ""}" data-recibo="false">
-          <span class="option-emoji">ðŸ¤·</span>
+          <span class="option-emoji">🤷</span>
           <span class="option-label">No lo tengo</span>
         </div>
       </div>
@@ -233,9 +233,9 @@ function renderPaso() {
   }
 
   else if (pasoActual === 3) {
-    stepLabel.textContent = "ENERGÃA Â· 3 DE 11";
+    stepLabel.textContent = "ENERGÍA · 3 DE 11";
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CuÃ¡les de estos hay en tu casa?</h2>
+      <h2 class="wizard-title">¿Cuáles de estos hay en tu casa?</h2>
       <p class="wizard-subtitle">Toca todos los que tengan. Puedes elegir varios.</p>
       <div class="cards-grid">
         ${ELECTRODOMESTICOS.map((eq) => {
@@ -269,15 +269,15 @@ function renderPaso() {
   }
 
   else if (pasoActual === 4) {
-    stepLabel.textContent = "ENERGÃA Â· 4 DE 11";
+    stepLabel.textContent = "ENERGÍA · 4 DE 11";
     const activos = ELECTRODOMESTICOS.filter((e) => !e.fijo && state.equiposSeleccionados.includes(e.id));
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CuÃ¡nto tiempo los usan?</h2>
-      <p class="wizard-subtitle">Un promedio estÃ¡ bien. La nevera ya la contamos encendida todo el dÃ­a.</p>
-      ${activos.length === 0 ? `<p class="wizard-subtitle">No seleccionaste electrodomÃ©sticos adicionales.</p>` : ""}
+      <h2 class="wizard-title">¿Cuánto tiempo los usan?</h2>
+      <p class="wizard-subtitle">Un promedio está bien. La nevera ya la contamos encendida todo el día.</p>
+      ${activos.length === 0 ? `<p class="wizard-subtitle">No seleccionaste electrodomésticos adicionales.</p>` : ""}
       ${activos.map((eq) => {
         const opts = eq.tipoUso === "dia" ? OPCIONES_DIA : OPCIONES_SEMANA;
-        const unitLabel = eq.tipoUso === "dia" ? "horas al dÃ­a" : "horas a la semana";
+        const unitLabel = eq.tipoUso === "dia" ? "horas al día" : "horas a la semana";
         const valActual = state.horasEquipos[eq.id] || opts[0].id;
         return `
           <div class="appliance-time-row">
@@ -295,7 +295,7 @@ function renderPaso() {
         `;
       }).join("")}
       <div class="did-you-know">
-        <strong>Â¿SabÃ­as que...?</strong> Una hora de aire acondicionado gasta lo mismo que unas 11 horas de ventilador.
+        <strong>¿Sabías que...?</strong> Una hora de aire acondicionado gasta lo mismo que unas 11 horas de ventilador.
       </div>
     `;
     wizardBody.querySelectorAll("[data-eq-hora]").forEach((btn) => {
@@ -307,17 +307,17 @@ function renderPaso() {
   }
 
   else if (pasoActual === 5) {
-    stepLabel.textContent = "COCINA Â· 5 DE 11";
+    stepLabel.textContent = "COCINA · 5 DE 11";
     const opcionesCocina = [
-      { id: "gas_natural", label: "Gas natural", sub: "Llega por tuberÃ­a", emoji: "ðŸ”¥" },
-      { id: "pipeta", label: "Pipeta", sub: "Gas en cilindro", emoji: "ðŸ›¢ï¸" },
-      { id: "electrica", label: "Estufa elÃ©ctrica", sub: "Se enchufa", emoji: "âš¡" },
-      { id: "lena", label: "LeÃ±a o carbÃ³n", sub: "Combustible sÃ³lido", emoji: "ðŸªµ" },
-      { id: "no_cocina", label: "No cocinamos", sub: "Compramos hecho", emoji: "ðŸ¥¡" }
+      { id: "gas_natural", label: "Gas natural", sub: "Llega por tubería", emoji: "🔥" },
+      { id: "pipeta", label: "Pipeta", sub: "Gas en cilindro", emoji: "🛢️" },
+      { id: "electrica", label: "Estufa eléctrica", sub: "Se enchufa", emoji: "⚡" },
+      { id: "lena", label: "Leña o carbón", sub: "Combustible sólido", emoji: "🪵" },
+      { id: "no_cocina", label: "No cocinamos", sub: "Compramos hecho", emoji: "🥡" }
     ];
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿Con quÃ© cocinan en tu casa?</h2>
-      <p class="wizard-subtitle">Elige el que mÃ¡s usan.</p>
+      <h2 class="wizard-title">¿Con qué cocinan en tu casa?</h2>
+      <p class="wizard-subtitle">Elige el que más usan.</p>
       <div class="cards-grid">
         ${opcionesCocina.map((c) => `
           <div class="option-card ${state.cocina === c.id ? "selected" : ""}" data-cocina="${c.id}">
@@ -334,15 +334,15 @@ function renderPaso() {
   }
 
   else if (pasoActual === 6) {
-    stepLabel.textContent = "CONSUMO Â· 6 DE 11";
+    stepLabel.textContent = "CONSUMO · 6 DE 11";
     const dietas = [
-      { id: "omnivora", label: "De todo un poco", sub: "Carne frecuente", emoji: "ðŸ¥©" },
-      { id: "poca_carne", label: "Poca carne roja", sub: "Pollo, pescado o granos", emoji: "ðŸ—" },
-      { id: "vegana", label: "Vegetariana / Vegana", sub: "Basada en plantas", emoji: "ðŸ¥—" }
+      { id: "omnivora", label: "De todo un poco", sub: "Carne frecuente", emoji: "🥩" },
+      { id: "poca_carne", label: "Poca carne roja", sub: "Pollo, pescado o granos", emoji: "🍗" },
+      { id: "vegana", label: "Vegetariana / Vegana", sub: "Basada en plantas", emoji: "🥗" }
     ];
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CÃ³mo es tu alimentaciÃ³n habitual?</h2>
-      <p class="wizard-subtitle">La producciÃ³n de alimentos tambiÃ©n representa parte de tu huella mensual.</p>
+      <h2 class="wizard-title">¿Cómo es tu alimentación habitual?</h2>
+      <p class="wizard-subtitle">La producción de alimentos también representa parte de tu huella mensual.</p>
       <div class="cards-grid">
         ${dietas.map((d) => `
           <div class="option-card ${state.dieta === d.id ? "selected" : ""}" data-dieta="${d.id}">
@@ -359,14 +359,14 @@ function renderPaso() {
   }
 
   else if (pasoActual === 7) {
-    stepLabel.textContent = "RESIDUOS Â· 7 DE 11";
+    stepLabel.textContent = "RESIDUOS · 7 DE 11";
     const optsRec = [
-      { id: "nunca", label: "No separo", sub: "Todo en una bolsa", emoji: "ðŸ—‘ï¸" },
-      { id: "aveces", label: "Separo a veces", sub: "PlÃ¡stico y cartÃ³n", emoji: "â™»ï¸" },
-      { id: "siempre", label: "Reciclo y compuesto", sub: "SeparaciÃ³n completa", emoji: "ðŸŒ±" }
+      { id: "nunca", label: "No separo", sub: "Todo en una bolsa", emoji: "🗑️" },
+      { id: "aveces", label: "Separo a veces", sub: "Plástico y cartón", emoji: "♻️" },
+      { id: "siempre", label: "Reciclo y compuesto", sub: "Separación completa", emoji: "🌱" }
     ];
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿Separas los residuos en tu casa?</h2>
+      <h2 class="wizard-title">¿Separas los residuos en tu casa?</h2>
       <p class="wizard-subtitle">Separar aprovechables reduce las emisiones en relleno sanitario.</p>
       <div class="cards-grid">
         ${optsRec.map((r) => `
@@ -384,18 +384,18 @@ function renderPaso() {
   }
 
   else if (pasoActual === 8) {
-    stepLabel.textContent = "MOVILIDAD Â· 8 DE 11";
+    stepLabel.textContent = "MOVILIDAD · 8 DE 11";
     const medios = [
-      { id: "pie", label: "A pie", emoji: "ðŸš¶" },
-      { id: "bicicleta", label: "Bicicleta", emoji: "ðŸš²" },
-      { id: "bus", label: "Bus o buseta", emoji: "ðŸšŒ" },
-      { id: "moto", label: "Moto propia", emoji: "ðŸï¸" },
-      { id: "mototaxi", label: "Mototaxi", emoji: "ðŸ›µ" },
-      { id: "carro", label: "Carro", emoji: "ðŸš—" },
-      { id: "taxi", label: "Taxi o plataforma", emoji: "ðŸš•" }
+      { id: "pie", label: "A pie", emoji: "🚶" },
+      { id: "bicicleta", label: "Bicicleta", emoji: "🚲" },
+      { id: "bus", label: "Bus o buseta", emoji: "🚌" },
+      { id: "moto", label: "Moto propia", emoji: "🏍️" },
+      { id: "mototaxi", label: "Mototaxi", emoji: "🛵" },
+      { id: "carro", label: "Carro", emoji: "🚗" },
+      { id: "taxi", label: "Taxi o plataforma", emoji: "🚕" }
     ];
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CÃ³mo llegas normalmente a la universidad?</h2>
+      <h2 class="wizard-title">¿Cómo llegas normalmente a la universidad?</h2>
       <p class="wizard-subtitle">El medio en el que haces la mayor parte del camino.</p>
       <div class="cards-grid">
         ${medios.map((m) => `
@@ -412,17 +412,17 @@ function renderPaso() {
   }
 
   else if (pasoActual === 9) {
-    stepLabel.textContent = "MOVILIDAD Â· 9 DE 11";
+    stepLabel.textContent = "MOVILIDAD · 9 DE 11";
     const distancias = [
       { id: "menos_1", label: "Menos de 1 km" },
       { id: "1_3", label: "1 a 3 km" },
       { id: "3_7", label: "3 a 7 km" },
       { id: "7_15", label: "7 a 15 km" },
-      { id: "mas_15", label: "MÃ¡s de 15 km" }
+      { id: "mas_15", label: "Más de 15 km" }
     ];
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿A quÃ© distancia vives de la universidad?</h2>
-      <p class="wizard-subtitle">Solo de ida. Un cÃ¡lculo aproximado estÃ¡ bien.</p>
+      <h2 class="wizard-title">¿A qué distancia vives de la universidad?</h2>
+      <p class="wizard-subtitle">Solo de ida. Un cálculo aproximado está bien.</p>
       <div class="pills-row" style="margin: 1.25rem 0 1.5rem 0;">
         ${distancias.map((d) => `
           <button type="button" class="pill-btn ${state.distancia === d.id ? "selected" : ""}" data-dist="${d.id}">${d.label}</button>
@@ -435,10 +435,10 @@ function renderPaso() {
   }
 
   else if (pasoActual === 10) {
-    stepLabel.textContent = "MOVILIDAD Â· 10 DE 11";
+    stepLabel.textContent = "MOVILIDAD · 10 DE 11";
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿CuÃ¡ntos dÃ­as a la semana vas?</h2>
-      <p class="wizard-subtitle">Selecciona los dÃ­as habituales de asistencia al campus.</p>
+      <h2 class="wizard-title">¿Cuántos días a la semana vas?</h2>
+      <p class="wizard-subtitle">Selecciona los días habituales de asistencia al campus.</p>
       <div class="days-row">
         ${[1, 2, 3, 4, 5, 6, 7].map((d) => `
           <button type="button" class="day-circle ${state.diasSemana === d ? "selected" : ""}" data-dia="${d}">${d}</button>
@@ -451,23 +451,23 @@ function renderPaso() {
   }
 
   else if (pasoActual === 11) {
-    stepLabel.textContent = "VUELOS Â· 11 DE 11";
+    stepLabel.textContent = "VUELOS · 11 DE 11";
     wizardBody.innerHTML = `
-      <h2 class="wizard-title">Â¿Viajaste en aviÃ³n este mes?</h2>
+      <h2 class="wizard-title">¿Viajaste en avión este mes?</h2>
       <p class="wizard-subtitle">Cuenta vuelos nacionales o internacionales de ida y vuelta.</p>
       <div class="cards-grid cards-grid-2">
         <div class="option-card ${state.viajoAvion ? "selected" : ""}" data-avion="true">
-          <span class="option-emoji">âœˆï¸</span>
-          <span class="option-label">SÃ­</span>
+          <span class="option-emoji">✈️</span>
+          <span class="option-label">Sí</span>
         </div>
         <div class="option-card ${!state.viajoAvion ? "selected" : ""}" data-avion="false">
-          <span class="option-emoji">ðŸ </span>
+          <span class="option-emoji">🏠</span>
           <span class="option-label">No</span>
         </div>
       </div>
       ${state.viajoAvion ? `
         <div class="inline-input-box">
-          <label for="input-vuelos">NÃºmero de trayectos en aviÃ³n este mes</label>
+          <label for="input-vuelos">Número de trayectos en avión este mes</label>
           <input id="input-vuelos" type="number" min="1" max="30" value="${state.vuelosMes}">
         </div>
       ` : ""}
@@ -600,7 +600,7 @@ async function enviarEncuesta() {
     window.location.href = "./informe.html";
   } catch (err) {
     btnSiguiente.disabled = false;
-    btnSiguiente.textContent = "Ver mi huella ðŸŒ±";
+    btnSiguiente.textContent = "Ver mi huella 🌱";
     mostrarMensaje(estadoEl, `Error al guardar: ${err.message}`, "error");
   }
 }
