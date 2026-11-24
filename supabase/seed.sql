@@ -1,6 +1,6 @@
 INSERT INTO public.consent_versions (version_code, notice_text, effective_from, is_active) VALUES (
   'v1.0-academico',
-  'La Universidad Antonio NariÃ±o, como responsable que debera identificarse y validar este aviso institucionalmente, solicita sus respuestas para estimar su huella de carbono y generar informes individuales y estadisticas agregadas de la comunidad universitaria. La participacion es voluntaria. Las respuestas se trataran para la finalidad informada y se protegeran con controles de acceso. Puede consultar, actualizar o solicitar la atencion de sus derechos por el canal institucional indicado ([POR COMPLETAR CON LA INSTANCIA INSTITUCIONAL]). Consulte el aviso completo de privacidad antes de continuar. Este texto no constituye concepto legal.',
+  'La Universidad Antonio Nariño, como responsable que debera identificarse y validar este aviso institucionalmente, solicita sus respuestas para estimar su huella de carbono y generar informes individuales y estadisticas agregadas de la comunidad universitaria. La participacion es voluntaria. Las respuestas se trataran para la finalidad informada y se protegeran con controles de acceso. Puede consultar, actualizar o solicitar la atencion de sus derechos por el canal institucional indicado ([POR COMPLETAR CON LA INSTANCIA INSTITUCIONAL]). Consulte el aviso completo de privacidad antes de continuar. Este texto no constituye concepto legal.',
   '2026-01-01', true
 );
 
