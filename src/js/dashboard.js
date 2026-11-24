@@ -13,9 +13,9 @@ function formatNum(n, dec = 1) {
 
 function traducirCategoria(cat) {
   const map = {
-    desplazamiento_campus: "ðŸšŒ Movilidad al campus",
-    electricidad: "âš¡ EnergÃ­a en casa",
-    gas_combustibles: "ðŸ”¥ Gas / Cocina"
+    desplazamiento_campus: "🚌 Movilidad al campus",
+    electricidad: "⚡ Energía en casa",
+    gas_combustibles: "🔥 Gas / Cocina"
   };
   return map[cat] || cat;
 }
@@ -51,7 +51,7 @@ function renderTablaParticipantes(lista) {
         <td>${badgeEstado}</td>
         <td>${fecha}</td>
         <td><strong>${formatNum(mensual, 1)} kg</strong> / mes</td>
-        <td>${formatNum(anual, 2)} kg / aÃ±o</td>
+        <td>${formatNum(anual, 2)} kg / año</td>
       </tr>
     `;
   }).join("");
@@ -101,7 +101,7 @@ async function cargarDashboard() {
       <div class="panel-card" style="border-color:#fca5a5; background:#fef2f2; color:#991b1b;">
         <h2>Acceso restringido</h2>
         <p>${error.message}</p>
-        <p style="font-size:0.88rem;">AsegÃºrate de haber ejecutado el script SQL de administrador en Supabase para tu cuenta (${user.email}).</p>
+        <p style="font-size:0.88rem;">Asegúrate de haber ejecutado el script SQL de administrador en Supabase para tu cuenta (${user.email}).</p>
       </div>
     `;
     return;
@@ -138,24 +138,24 @@ async function cargarDashboard() {
       <div class="kpi-card">
         <div class="kpi-title">Huella promedio mensual</div>
         <div class="kpi-value">${formatNum(promedioMensual, 1)} kg</div>
-        <div class="kpi-sub">COâ‚‚e por participante / mes</div>
+        <div class="kpi-sub">CO₂e por participante / mes</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-title">Huella promedio anual</div>
         <div class="kpi-value">${formatNum(promedioAnual, 1)} kg</div>
-        <div class="kpi-sub">${formatNum(promedioAnual / 1000, 3)} t COâ‚‚e / aÃ±o</div>
+        <div class="kpi-sub">${formatNum(promedioAnual / 1000, 3)} t CO₂e / año</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-title">Emisiones acumuladas</div>
         <div class="kpi-value">${formatNum(sumaAnual / 1000, 2)} t</div>
-        <div class="kpi-sub">${formatNum(sumaAnual, 1)} kg COâ‚‚e totales en el periodo</div>
+        <div class="kpi-sub">${formatNum(sumaAnual, 1)} kg CO₂e totales en el periodo</div>
       </div>
     </section>
 
     <section class="charts-grid" style="margin-top:1.25rem;">
       <div class="panel-card">
-        <h2>Emisiones totales por categorÃ­a</h2>
-        ${categoriasGlobal.length === 0 ? `<p style="color:#6b7280;">Sin datos de categorÃ­as aÃºn.</p>` : categoriasGlobal.map((c) => {
+        <h2>Emisiones totales por categoría</h2>
+        ${categoriasGlobal.length === 0 ? `<p style="color:#6b7280;">Sin datos de categorías aún.</p>` : categoriasGlobal.map((c) => {
           const val = Number(c.total_kgco2e || 0);
           const pct = Math.max(5, Math.round((val / maxCatTotal) * 100));
           return `
@@ -169,8 +169,8 @@ async function cargarDashboard() {
       </div>
 
       <div class="panel-card">
-        <h2>ParticipaciÃ³n y promedio por estamento</h2>
-        ${gruposLista.length === 0 ? `<p style="color:#6b7280;">Sin participantes registrados aÃºn.</p>` : gruposLista.map((g) => {
+        <h2>Participación y promedio por estamento</h2>
+        ${gruposLista.length === 0 ? `<p style="color:#6b7280;">Sin participantes registrados aún.</p>` : gruposLista.map((g) => {
           const pct = Math.max(8, Math.round((g.count / maxGrupoCount) * 100));
           const promMes = (g.sumaAnual / g.count) / 12;
           return `
@@ -187,7 +187,7 @@ async function cargarDashboard() {
     <section class="panel-card" style="margin-top:1.25rem;">
       <div class="table-toolbar">
         <div>
-          <h2 style="margin:0;">Registro de participantes (Â¿QuiÃ©n hizo la encuesta?)</h2>
+          <h2 style="margin:0;">Registro de participantes (¿Quién hizo la encuesta?)</h2>
           <span id="contador-filtrados" style="font-size:0.84rem; color:#6b7280;"></span>
         </div>
         <div class="filter-group">
@@ -208,7 +208,7 @@ async function cargarDashboard() {
               <th>Correo institucional</th>
               <th>Estamento</th>
               <th>Estado</th>
-              <th>Fecha de envÃ­o</th>
+              <th>Fecha de envío</th>
               <th>Huella mensual</th>
               <th>Huella anual</th>
             </tr>
